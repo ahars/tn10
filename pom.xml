@@ -54,8 +54,8 @@
     <dependencies>
 
         <dependency>
-            <groupId>tn10</groupId>
-            <artifactId>1</artifactId>
+            <groupId>fr.ippon.tn10</groupId>
+            <artifactId>sparky</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
