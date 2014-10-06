@@ -1,8 +1,11 @@
-import org.apache.commons.net.ntp.TimeStamp;
 
-import java.io.File;
 import java.io.Serializable;
 import java.lang.String;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -198,13 +201,13 @@ public class ApacheAccessLog implements Serializable {
                 m.group(11), m.group(12), m.group(13), m.group(14), m.group(15), m.group(16));
     }
 
-    @Override public String toString() {
+/*    @Override public String toString() {
         return String.format("%s %s %s [%s] \"%s %s %s\" %s %s \"%s\" \" %s %s %s %s %s %s\"",
                 ip.getIp(), clientIdentd, userID, dateTimeString, method, endpoint,
                 protocol, responseCode, contentSize, link, mozillaVersion, os, webkit,
                 renduHtml, chromeVersion, safariVersion);
     }
-
+*/
     private String getProtocolToIndexString() {
         Pattern pro = Pattern.compile("^(\\S+)/(\\S+)");
         Matcher mpro = pro.matcher(protocol);
@@ -215,7 +218,7 @@ public class ApacheAccessLog implements Serializable {
         }
 
         return String.format("{" +
-                "\n\t\t\"nom\" => \"" + mpro.group(1) + "\"" +
+                "\n\t\t\"nom\" => \"" + mpro.group(1) + "\"," +
                 "\n\t\t\"version\" => \"" + mpro.group(2) + "\"" +
                 "\n\t}");
     }
@@ -230,7 +233,7 @@ public class ApacheAccessLog implements Serializable {
         }
 
         return String.format("{" +
-                "\n\t\t\"type\" => \"" + mwk.group(1) + "\"" +
+                "\n\t\t\"type\" => \"" + mwk.group(1) + "\"," +
                 "\n\t\t\"version\" => \"" + mwk.group(2) + "\"" +
                 "\n\t}");
     }
@@ -245,7 +248,7 @@ public class ApacheAccessLog implements Serializable {
         }
 
         return String.format("{" +
-                "\n\t\t\"nom\" => \"" + mrendu.group(1) + "\"" +
+                "\n\t\t\"nom\" => \"" + mrendu.group(1) + "\"," +
                 "\n\t\t\"type\" => \"" + mrendu.group(3) + "\"" +
                 "\n\t}");
     }
@@ -260,7 +263,7 @@ public class ApacheAccessLog implements Serializable {
         }
 
         return String.format("{" +
-                "\n\t\t\"nom\" => \"" + mchr.group(1) + "\"" +
+                "\n\t\t\"nom\" => \"" + mchr.group(1) + "\"," +
                 "\n\t\t\"version\" => \"" + mchr.group(2) + "\"" +
                 "\n\t}");
     }
@@ -275,7 +278,7 @@ public class ApacheAccessLog implements Serializable {
         }
 
         return String.format("{" +
-                "\n\t\t\"nom\" => \"" + msaf.group(1) + "\"" +
+                "\n\t\t\"nom\" => \"" + msaf.group(1) + "\"," +
                 "\n\t\t\"version\" => \"" + msaf.group(2) + "\"" +
                 "\n\t}");
     }
@@ -290,7 +293,7 @@ public class ApacheAccessLog implements Serializable {
         }
 
         return String.format("{" +
-                "\n\t\t\"nom\" => \"" + mmoz.group(1) + "\"" +
+                "\n\t\t\"nom\" => \"" + mmoz.group(1) + "\"," +
                 "\n\t\t\"version\" => \"" + mmoz.group(2) + "\"" +
                 "\n\t}");
     }
@@ -305,30 +308,39 @@ public class ApacheAccessLog implements Serializable {
         }
 
         return String.format("{" +
-                "\n\t\t\"type\" => \"" + mos.group(1) + "\"" +
-                "\n\t\t\"nom\" => \"" + mos.group(2) + "\"" +
+                "\n\t\t\"type\" => \"" + mos.group(1) + "\"," +
+                "\n\t\t\"nom\" => \"" + mos.group(2) + "\"," +
                 "\n\t\t\"version\" => \"" + mos.group(3) + "\"" +
                 "\n\t}");
     }
 
     private String getDateTimeToIndexString() {
-        Pattern dat = Pattern.compile("^(\\S+)/(\\S+)/(\\S+):(\\S+):(\\S+):(\\S+) (\\S+)");
-        Matcher mdat = dat.matcher(dateTimeString);
 
-        if (!mdat.find()) {
-            logger.log(Level.ALL, "Cannot parse dateTime " + dateTimeString);
-            throw new RuntimeException("Error parsing dateTime");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MMM/yyyy:HH:mm:ss ZZZ", Locale.US);
+        Date date = null;
+
+        try {
+            date = formatter.parse(dateTimeString);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
-        //Date d = new Date(Integer.getInteger(mdat.group(3)), Integer.getInteger(mdat.group(3)));
 
         return String.format("{" +
-                "\n\t\t\"1\" => \"" + dateTimeString + "\"" +
-                "\n\t\t\"2\" => \"" + mdat.group(2) + "\"" +
-                "\n\t\t\"3\" => \"" + mdat.group(3) + "\"" +
+                "\n\t\t\"dateTimeString\" => \"" + dateTimeString + "\"," +
+                "\n\t\t\"timestamp\" => \"" + date.getTime() + "\"," +
+                "\n\t\t\"day\" => \"" + date.getDay() + "\"," +
+                "\n\t\t\"date\" => \"" + date.getDate() + "\"," +
+                "\n\t\t\"month\" => \"" + date.getMonth() + "\"," +
+                "\n\t\t\"year\" => \"" + (date.getYear() + 1900 ) + "\"," +
+                "\n\t\t\"hours\" => \"" + date.getHours() + "\"," +
+                "\n\t\t\"minutes\" => \"" + date.getMinutes() + "\"," +
+                "\n\t\t\"seconds\" => \"" + date.getSeconds() + "\"," +
+                "\n\t\t\"timezonOffset\" => \"" + date.getTimezoneOffset() + "\"" +
                 "\n\t}");
     }
 
-    public String toIndexString() {
+    @Override
+    public String toString() {
         return String.format("{" +
                         "\n\t\"ip\" => %s," +
                         "\n\t\"clientID\" => \"%s\"," +
