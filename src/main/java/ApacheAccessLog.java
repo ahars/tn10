@@ -218,8 +218,8 @@ public class ApacheAccessLog implements Serializable {
         }
 
         return String.format("{" +
-                "\n\t\t\"nom\" => \"" + mpro.group(1) + "\"," +
-                "\n\t\t\"version\" => \"" + mpro.group(2) + "\"" +
+                "\n\t\t\"nom\" : \"" + mpro.group(1) + "\"," +
+                "\n\t\t\"version\" : \"" + mpro.group(2) + "\"" +
                 "\n\t}");
     }
 
@@ -233,8 +233,8 @@ public class ApacheAccessLog implements Serializable {
         }
 
         return String.format("{" +
-                "\n\t\t\"type\" => \"" + mwk.group(1) + "\"," +
-                "\n\t\t\"version\" => \"" + mwk.group(2) + "\"" +
+                "\n\t\t\"type\" : \"" + mwk.group(1) + "\"," +
+                "\n\t\t\"version\" : \"" + mwk.group(2) + "\"" +
                 "\n\t}");
     }
 
@@ -248,8 +248,8 @@ public class ApacheAccessLog implements Serializable {
         }
 
         return String.format("{" +
-                "\n\t\t\"nom\" => \"" + mrendu.group(1) + "\"," +
-                "\n\t\t\"type\" => \"" + mrendu.group(3) + "\"" +
+                "\n\t\t\"nom\" : \"" + mrendu.group(1) + "\"," +
+                "\n\t\t\"type\" : \"" + mrendu.group(3) + "\"" +
                 "\n\t}");
     }
 
@@ -263,8 +263,8 @@ public class ApacheAccessLog implements Serializable {
         }
 
         return String.format("{" +
-                "\n\t\t\"nom\" => \"" + mchr.group(1) + "\"," +
-                "\n\t\t\"version\" => \"" + mchr.group(2) + "\"" +
+                "\n\t\t\"nom\" : \"" + mchr.group(1) + "\"," +
+                "\n\t\t\"version\" : \"" + mchr.group(2) + "\"" +
                 "\n\t}");
     }
 
@@ -278,8 +278,8 @@ public class ApacheAccessLog implements Serializable {
         }
 
         return String.format("{" +
-                "\n\t\t\"nom\" => \"" + msaf.group(1) + "\"," +
-                "\n\t\t\"version\" => \"" + msaf.group(2) + "\"" +
+                "\n\t\t\"nom\" : \"" + msaf.group(1) + "\"," +
+                "\n\t\t\"version\" : \"" + msaf.group(2) + "\"" +
                 "\n\t}");
     }
 
@@ -293,8 +293,8 @@ public class ApacheAccessLog implements Serializable {
         }
 
         return String.format("{" +
-                "\n\t\t\"nom\" => \"" + mmoz.group(1) + "\"," +
-                "\n\t\t\"version\" => \"" + mmoz.group(2) + "\"" +
+                "\n\t\t\"nom\" : \"" + mmoz.group(1) + "\"," +
+                "\n\t\t\"version\" : \"" + mmoz.group(2) + "\"" +
                 "\n\t}");
     }
 
@@ -308,9 +308,9 @@ public class ApacheAccessLog implements Serializable {
         }
 
         return String.format("{" +
-                "\n\t\t\"type\" => \"" + mos.group(1) + "\"," +
-                "\n\t\t\"nom\" => \"" + mos.group(2) + "\"," +
-                "\n\t\t\"version\" => \"" + mos.group(3) + "\"" +
+                "\n\t\t\"type\" : \"" + mos.group(1) + "\"," +
+                "\n\t\t\"nom\" : \"" + mos.group(2) + "\"," +
+                "\n\t\t\"version\" : \"" + mos.group(3) + "\"" +
                 "\n\t}");
     }
 
@@ -326,38 +326,38 @@ public class ApacheAccessLog implements Serializable {
         }
 
         return String.format("{" +
-                "\n\t\t\"dateTimeString\" => \"" + dateTimeString + "\"," +
-                "\n\t\t\"timestamp\" => \"" + date.getTime() + "\"," +
-                "\n\t\t\"day\" => \"" + date.getDay() + "\"," +
-                "\n\t\t\"date\" => \"" + date.getDate() + "\"," +
-                "\n\t\t\"month\" => \"" + date.getMonth() + "\"," +
-                "\n\t\t\"year\" => \"" + (date.getYear() + 1900 ) + "\"," +
-                "\n\t\t\"hours\" => \"" + date.getHours() + "\"," +
-                "\n\t\t\"minutes\" => \"" + date.getMinutes() + "\"," +
-                "\n\t\t\"seconds\" => \"" + date.getSeconds() + "\"," +
-                "\n\t\t\"timezonOffset\" => \"" + date.getTimezoneOffset() + "\"" +
+                "\n\t\t\"dateTimeString\" : \"" + dateTimeString + "\"," +
+                "\n\t\t\"timestamp\" : \"" + date.getTime() + "\"," +
+                "\n\t\t\"day\" : \"" + date.getDay() + "\"," +
+                "\n\t\t\"date\" : \"" + date.getDate() + "\"," +
+                "\n\t\t\"month\" : \"" + date.getMonth() + "\"," +
+                "\n\t\t\"year\" : \"" + (date.getYear() + 1900 ) + "\"," +
+                "\n\t\t\"hours\" : \"" + date.getHours() + "\"," +
+                "\n\t\t\"minutes\" : \"" + date.getMinutes() + "\"," +
+                "\n\t\t\"seconds\" : \"" + date.getSeconds() + "\"," +
+                "\n\t\t\"timezonOffset\" : \"" + date.getTimezoneOffset() + "\"" +
                 "\n\t}");
     }
 
     @Override
     public String toString() {
         return String.format("{" +
-                        "\n\t\"ip\" => %s," +
-                        "\n\t\"clientID\" => \"%s\"," +
-                        "\n\t\"userID\" => \"%s\"," +
-                        "\n\t\"date\" => %s," +
-                        "\n\t\"method\" => \"%s\"," +
-                        "\n\t\"endPoint\" => \"%s\"," +
-                        "\n\t\"protocol\" => %s," +
-                        "\n\t\"responseCode\" => \"%s\"," +
-                        "\n\t\"contentSize\" => \"%s\"," +
-                        "\n\t\"link\" => \"%s\"," +
-                        "\n\t\"mozillaVersion\" => %s," +
-                        "\n\t\"os\" => %s," +
-                        "\n\t\"kit\" => %s," +
-                        "\n\t\"renduHtml\" => %s," +
-                        "\n\t\"chromeVersion\" => %s," +
-                        "\n\t\"safariVersion\" => %s" +
+                        "\n\t\"geoip\" : %s," +
+                        "\n\t\"clientID\" : \"%s\"," +
+                        "\n\t\"userID\" : \"%s\"," +
+                        "\n\t\"date\" : %s," +
+                        "\n\t\"method\" : \"%s\"," +
+                        "\n\t\"endPoint\" : \"%s\"," +
+                        "\n\t\"protocol\" : %s," +
+                        "\n\t\"responseCode\" : \"%s\"," +
+                        "\n\t\"contentSize\" : \"%s\"," +
+                        "\n\t\"link\" : \"%s\"," +
+                        "\n\t\"mozillaVersion\" : %s," +
+                        "\n\t\"os\" : %s," +
+                        "\n\t\"kit\" : %s," +
+                        "\n\t\"renduHtml\" : %s," +
+                        "\n\t\"chromeVersion\" : %s," +
+                        "\n\t\"safariVersion\" : %s" +
                         "\n}",
                 ip.locationIpToIndexString(), clientIdentd, userID, getDateTimeToIndexString(), method, endpoint,
                 getProtocolToIndexString(), responseCode, contentSize, link,

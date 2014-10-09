@@ -149,17 +149,19 @@ public class LocationIp {
 
     public String locationIpToIndexString() {
         return String.format("{" +
-                "\n\t\t\"countryCode\" => \"" + countryCode + "\"," +
-                "\n\t\t\"countryName\" => \"" + countryName + "\"," +
-                "\n\t\t\"region\" => \"" + region + "\"," +
-                "\n\t\t\"regionName\" => \"" + regName + "\"," +
-                "\n\t\t\"city\" => \"" + city + "\"," +
-                "\n\t\t\"postalCode\" => \"" + postalCode + "\"," +
-                "\n\t\t\"latitude\" => \"" + latitude + "\"," +
-                "\n\t\t\"longitude\" => \"" + longitude + "\"," +
-                "\n\t\t\"metroCode\" => \"" + metroCode + "\"," +
-                "\n\t\t\"areaCode\" => \"" + areaCode + "\"," +
-                "\n\t\t\"timezone\" => \"" + timezone + "\"" +
+                "\n\t\t\"ip\" : \"" + ip + "\"," +
+                "\n\t\t\"countryCode\" : \"" + countryCode + "\"," +
+                "\n\t\t\"countryName\" : \"" + countryName + "\"," +
+                "\n\t\t\"region\" : \"" + region + "\"," +
+                "\n\t\t\"regionName\" : \"" + regName + "\"," +
+                "\n\t\t\"city\" : \"" + city + "\"," +
+                "\n\t\t\"postalCode\" : \"" + postalCode + "\"," +
+                "\n\t\t\"lnglat\" : [" + longitude + ", " + latitude + "]," +
+                "\n\t\t\"latitude\" : \"" + latitude + "\"," +
+                "\n\t\t\"longitude\" : \"" + longitude + "\"," +
+                "\n\t\t\"metroCode\" : \"" + metroCode + "\"," +
+                "\n\t\t\"areaCode\" : \"" + areaCode + "\"," +
+                "\n\t\t\"timezone\" : \"" + timezone + "\"" +
                 "\n\t}");
     }
 }
