@@ -122,7 +122,8 @@
     <orderEntry type="library" name="Maven: org.antlr:antlr-runtime:3.5" level="project" />
     <orderEntry type="library" name="Maven: org.ow2.asm:asm:4.1" level="project" />
     <orderEntry type="library" name="Maven: org.ow2.asm:asm-commons:4.1" level="project" />
-    <orderEntry type="library" name="Maven: org.elasticsearch:elasticsearch-hadoop:2.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.elasticsearch:elasticsearch-hadoop:2.0.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: cascading:cascading-local:2.5.6" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.hive:hive-service:0.13.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.hive:hive-exec:0.13.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.hive:hive-ant:0.13.1" level="project" />
@@ -167,9 +168,8 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: asm:asm-commons:3.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: asm:asm-tree:3.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: asm:asm:3.1" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: cascading:cascading-local:2.5.5" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: joda-time:joda-time:1.6" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: cascading:cascading-hadoop:2.5.5" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: cascading:cascading-hadoop:2.5.6" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.pig:pig:0.13.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: tomcat:jasper-runtime:5.5.12" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: tomcat:jasper-compiler:5.5.12" level="project" />
