@@ -3,14 +3,11 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.serializer.KryoSerializer;
 
-import org.elasticsearch.common.collect.ImmutableList;
-import org.elasticsearch.common.collect.ImmutableMap;
-import org.elasticsearch.spark.api.java.JavaEsSpark;
-import org.elasticsearch.spark.rdd.JavaEsRDD;
-import scala.collection.mutable.Map;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.node.Node;
 
-import java.util.Arrays;
-import java.util.List;
+import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 public class LogWriteToES {
 
@@ -18,21 +15,30 @@ public class LogWriteToES {
 
         final String PATH = "C:\\Users\\IPPON_2\\Desktop\\tn10\\sparky\\src\\data\\";
         String filename = PATH + "\\sample.log";
-        //String filename = PATH + "\\apache_logs_1.log";
 
         SparkConf conf = new SparkConf()
                 .setAppName("SparkToES")
                 .setMaster("local")
-                .set("es.nodes", "localhost:9200")
+                .set("es.nodes", "10.10.200.249:9200")
                 .set("spark.serializer", KryoSerializer.class.getName())
-               ;// .set("es.index.auto.create", "true");
+                .set("es.index.auto.create", "true");
         JavaSparkContext sc = new JavaSparkContext(conf);
 
         JavaRDD<String> javaRDD = sc.textFile(filename).map(x -> ApacheAccessLog.parseFromLogLine(x).toString());
-        //JavaEsSpark.saveToEs(javaRDD, PATH);
+        System.out.println(javaRDD.first().toString());
 
-        //JavaEsSpark.saveJsonToEs(javaRDD, "C:\\Users\\IPPON_2\\Google Drive\\tn10\\elasticsearch-1.3.4\\data\\Spark");
+        Node node = nodeBuilder().clusterName("elasticsearch").node();
+        Client client = node.client();
 
+        IndexResponse response = client.prepareIndex("test", "logs", "1")
+                .setSource(javaRDD.first().toString())
+                .execute()
+                .actionGet();
+
+        System.out.println(response.getIndex());
+
+        node.close();
         sc.stop();
     }
 }
+
