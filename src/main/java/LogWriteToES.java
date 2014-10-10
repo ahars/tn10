@@ -30,14 +30,14 @@ public class LogWriteToES {
         Node node = nodeBuilder().clusterName("elasticsearch").node();
         Client client = node.client();
 
-        IndexResponse response = client.prepareIndex("test", "logs", "1")
+        IndexResponse response = client.prepareIndex("sparky", "LogWrite")
                 .setSource(javaRDD.first().toString())
                 .execute()
                 .actionGet();
 
         System.out.println(response.getIndex());
 
-        node.close();
+        //node.close();
         sc.stop();
     }
 }
