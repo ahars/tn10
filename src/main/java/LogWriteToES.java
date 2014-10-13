@@ -37,7 +37,7 @@ public class LogWriteToES {
 
         System.out.println(response.getIndex());
 
-        //node.close();
+        node.close();
         sc.stop();
     }
 }

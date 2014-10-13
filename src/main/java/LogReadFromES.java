@@ -17,7 +17,7 @@ public class LogReadFromES {
 
         System.out.println(response.getSourceAsString());
 
-        //node.close();
+        node.close();
     }
 }
 

@@ -1,32 +1,23 @@
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.node.Node;
+
+import java.io.IOException;
+
+import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 import static org.elasticsearch.node.NodeBuilder.*;
 
 public class ESConnection {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         Node node = nodeBuilder().clusterName("elasticsearch").node();
         Client client = node.client();
 
         String log = "" +
                 "{" +
-                "\"geoip\" : {" +
-                "\"ip\" : \"88.162.200.57\"," +
-                "\"countryCode\" : \"FR\"," +
-                "\"countryName\" : \"France\"," +
-                "\"region\" : \"A8\"," +
-                "\"regionName\" : \"Ile-de-France\"," +
-                "\"city\" : \"Paris\"," +
-                "\"postalCode\" : \"75010\"," +
-                "\"lnglat\" : [2.3560944, 48.870895]," +
-                "\"latitude\" : \"48.870895\"," +
-                "\"longitude\" : \"2.3560944\"," +
-                "\"metroCode\" : \"0\"," +
-                "\"areaCode\" : \"0\"," +
-                "\"timezone\" : \"Europe/Paris\"" +
-                "}" +
+                "\"name\" : \"Sparky\"" +
                 "}";
 
         IndexResponse response = client.prepareIndex("sparky", "connection", "1")
@@ -36,6 +27,24 @@ public class ESConnection {
 
         System.out.println(response.getIndex());
 
-        //node.close();
+
+        XContentBuilder builder = jsonBuilder()
+                .startObject()
+                .field("user", "kimchy")
+                .field("postDate", "12")
+                .field("message", "trying out Elasticsearch")
+                .endObject();
+        System.out.println(builder.string());
+
+        IndexResponse ree = client.prepareIndex("twitter", "tweet", "1")
+                .setSource(jsonBuilder()
+                    .startObject()
+                    .field("user", "kimchy")
+                    .field("postDate", "12")
+                    .field("message", "trying out Elasticsearch")
+                    .endObject()
+                )
+                .execute()
+                .actionGet();
     }
 }

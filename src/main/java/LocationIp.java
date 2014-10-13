@@ -3,9 +3,12 @@ import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
 import com.maxmind.geoip.regionName;
 import com.maxmind.geoip.timeZone;
+import org.elasticsearch.common.xcontent.XContentBuilder;
 
 import java.io.File;
 import java.io.IOException;
+
+import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 public class LocationIp {
 
@@ -147,21 +150,12 @@ public class LocationIp {
         this.timezone = timezone;
     }
 
-    public String locationIpToIndexString() {
-        return String.format("{" +
-                "\n\t\t\"ip\" : \"" + ip + "\"," +
-                "\n\t\t\"countryCode\" : \"" + countryCode + "\"," +
-                "\n\t\t\"countryName\" : \"" + countryName + "\"," +
-                "\n\t\t\"region\" : \"" + region + "\"," +
-                "\n\t\t\"regionName\" : \"" + regName + "\"," +
-                "\n\t\t\"city\" : \"" + city + "\"," +
-                "\n\t\t\"postalCode\" : \"" + postalCode + "\"," +
-                "\n\t\t\"lnglat\" : [" + longitude + ", " + latitude + "]," +
-                "\n\t\t\"latitude\" : \"" + latitude + "\"," +
-                "\n\t\t\"longitude\" : \"" + longitude + "\"," +
-                "\n\t\t\"metroCode\" : \"" + metroCode + "\"," +
-                "\n\t\t\"areaCode\" : \"" + areaCode + "\"," +
-                "\n\t\t\"timezone\" : \"" + timezone + "\"" +
-                "\n\t}");
+    public Float[] getLngLat() {
+        return new Float[]{longitude, latitude};
+    }
+
+    public String[] locationIpToIndexString() {
+        return new String[]{countryCode, countryName, region, regName, city, postalCode, String.valueOf(latitude),
+                String.valueOf(longitude), String.valueOf(metroCode), String.valueOf(areaCode), timezone};
     }
 }

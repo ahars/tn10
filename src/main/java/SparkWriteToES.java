@@ -1,13 +1,9 @@
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.serializer.KryoSerializer;
-import org.elasticsearch.common.collect.ImmutableList;
-import org.elasticsearch.common.collect.ImmutableMap;
-import org.elasticsearch.hadoop.cfg.ConfigurationOptions;
-import org.elasticsearch.hadoop.mr.EsOutputFormat;
-import org.elasticsearch.spark.api.java.JavaEsSpark;
-import scala.collection.immutable.Map;
+
+import static org.elasticsearch.spark.api.java.JavaEsSpark.saveJsonToEs;
 
 public class SparkWriteToES {
 
@@ -20,20 +16,13 @@ public class SparkWriteToES {
                 .setAppName("SparkToES")
                 .setMaster("local")
                 .set("es.nodes", "localhost:9200")
-                .set("spark.serializer", org.apache.spark.serializer.KryoSerializer.class.getName())
                 .set("es.index.auto.create", "true");
-                //.set("mapred.output.format.class", "org.elasticsearch.hadoop.mr.EsOutputFormat")
-                //.set(ConfigurationOptions.ES_RESOURCE_WRITE, "spark_test/log");
         JavaSparkContext sc = new JavaSparkContext(conf);
 
-        JavaRDD<String> javaRDD = sc.textFile(filename).map(x -> ApacheAccessLog.parseFromLogLine(x).toString());
-        System.out.println(javaRDD.first().toString());
-
-
-        JavaEsSpark.saveToEs(javaRDD, "spark/logs");
-
-
-
+        JavaRDD<String> javaRDD = sc.textFile(filename)
+                .map(x -> ApacheAccessLog.parseFromLogLine(x).toJSON().string())
+                .cache();
+        saveJsonToEs(javaRDD, "sparky/WriteToES");
 
         sc.stop();
     }
