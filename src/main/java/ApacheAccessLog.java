@@ -19,62 +19,64 @@ import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 public class ApacheAccessLog implements Serializable {
 
     private static final Logger logger = Logger.getLogger("Access");
+    private static int id = 0;
 
-    private String ip;
-    private String countryCode;
-    private String countryName;
-    private String regionCode;
-    private String regionName;
-    private String city;
-    private String postalCode;
-    private List<Float> lnglat;
-    private Float latitude;
-    private Float longitude;
-    private int metroCode;
-    private int areaCode;
-    private String timezone;
-    private String clientID;
-    private String userID;
-    private String dateTimeString;
-    private String timestamp;
-    private int day;
-    private int date;
-    private int month;
-    private int year;
-    private int hours;
-    private int minutes;
-    private int seconds;
-    private int timezoneOffset;
-    private String method;
-    private String endpoint;
-    private String protocolName;
-    private String protocolVersion;
-    private int responseCode;
-    private long contentSize;
-    private String link;
-    private String mozillaName;
-    private String mozillaVersion;
-    private String osType;
-    private String osName;
-    private String osVersion;
-    private String webkitType;
-    private String webkitVersion;
-    private String renduHtmlName;
-    private String renduHtmlType;
-    private String chromeName;
-    private String chromeVersion;
-    private String safariName;
-    private String safariVersion;
+    private String ip = null;
+    private String countryCode = null;
+    private String countryName = null;
+    private String regionCode = null;
+    private String regionName = null;
+    private String city = null;
+    private String postalCode = null;
+    private List<Float> lnglat = null;
+    private Float latitude = null;
+    private Float longitude = null;
+    private int metroCode = 0;
+    private int areaCode = 0;
+    private String timezone = null;
+    private String clientID = null;
+    private String userID = null;
+    private String dateTimeString = null;
+    private String timestamp = null;
+    private int day = 0;
+    private int date = 0;
+    private int month = 0;
+    private int year = 0;
+    private int hours = 0;
+    private int minutes = 0;
+    private int seconds = 0;
+    private int timezoneOffset = 0;
+    private String method = null;
+    private String endpoint = null;
+    private String protocolName = null;
+    private String protocolVersion = null;
+    private int responseCode = 0;
+    private long contentSize = 0;
+    private String link = null;
+    private String mozillaName = null;
+    private String mozillaVersion = null;
+    private String osType = null;
+    private String osName = null;
+    private String osVersion = null;
+    private String webkitType = null;
+    private String webkitVersion = null;
+    private String renduHtmlName = null;
+    private String renduHtmlType = null;
+    private String chromeName = null;
+    private String chromeVersion = null;
+    private String safariName = null;
+    private String safariVersion = null;
 
-    private ApacheAccessLog() {}
+    public ApacheAccessLog() {}
 
-    private ApacheAccessLog(String ip, String clientID, String userID, String dateString,
+    public ApacheAccessLog(String ip, String clientID, String userID, String dateString,
                             String method, String endpoint, String protocol, String responseCode,
                             String contentSize, String link, String mozilla, String os,
                             String webkit, String renduHtml, String chrome, String safari) {
 
         LocationIp location = new LocationIp(ip);
 
+        this.id = getid();
         this.ip = location.getIp();
         this.countryCode = location.getCountryCode();
         this.countryName = location.getCountryName();
@@ -122,6 +124,112 @@ public class ApacheAccessLog implements Serializable {
         this.safariVersion = getSafariToString(safari)[1];
     }
 
+    public ApacheAccessLog(ApacheAccessLog x) {
+        this.id = x.getid();
+        this.ip = x.getIp();
+        this.countryCode = x.getCountryCode();
+        this.countryName = x.getCountryName();
+        this.regionCode = x.getRegionCode();
+        this.regionName = x.getRegionName();
+        this.city = x.getCity();
+        this.postalCode = x.getPostalCode();
+        this.lnglat = x.getLnglat();
+        this.latitude = x.getLatitude();
+        this.longitude = x.getLongitude();
+        this.metroCode = x.getMetroCode();
+        this.areaCode = x.getAreaCode();
+        this.timezone = x.getTimezone();
+        this.clientID = x.getClientID();
+        this.userID = x.getUserID();
+        this.dateTimeString = x.getDateTimeString();
+        this.timestamp = x.getDateTimestamp();
+        this.day = x.getDay();
+        this.date = x.getDate();
+        this.month = x.getMonth();
+        this.year = x.getYear();
+        this.hours = x.getHours();
+        this.minutes = x.getMinutes();
+        this.seconds = x.getSeconds();
+        this.timezoneOffset = x.getTimezoneOffset();
+        this.method = x.getMethod();
+        this.endpoint = x.getEndpoint();
+        this.protocolName = getProtocolName();
+        this.protocolVersion = getProtocolVersion();
+        this.responseCode = x.getResponseCode();
+        this.contentSize =  x.getContentSize();
+        this.link = x.getLink();
+        this.mozillaName = x.getMozillaName();
+        this.mozillaVersion = x.getMozillaVersion();
+        this.osType = x.getOsType();
+        this.osName = x.getOsName();
+        this.osVersion = x.getOsVersion();
+        this.webkitType = x.getWebkitType();
+        this.webkitVersion = x.getWebkitVersion();
+        this.renduHtmlName = x.getRenduHtmlName();
+        this.renduHtmlType = x.getRenduHtmlType();
+        this.chromeName = x.getChromeName();
+        this.chromeVersion = x.getChromeVersion();
+        this.safariName = x.getSafariName();
+        this.safariVersion = x.getSafariVersion();
+    }
+
+    private int getid() {
+        this.id = this.id + 1;
+        return id;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public String getCountryName() {
+        return countryName;
+    }
+
+    public String getRegionCode() {
+        return regionCode;
+    }
+
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public List<Float> getLnglat() {
+        return lnglat;
+    }
+
+    public Float getLatitude() {
+        return latitude;
+    }
+
+    public Float getLongitude() {
+        return longitude;
+    }
+
+    public int getMetroCode() {
+        return metroCode;
+    }
+
+    public int getAreaCode() {
+        return areaCode;
+    }
+
+    public String getTimezone() {
+        return timezone;
+    }
+
     public String getClientID() {
         return clientID;
     }
@@ -132,6 +240,40 @@ public class ApacheAccessLog implements Serializable {
 
     public String getDateTimeString() {
         return dateTimeString;
+    }
+
+    public String getDateTimestamp() { return timestamp; }
+
+    public int getDay() {
+        return day;
+    }
+
+    public int getDate() {
+        return date;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public int getHours() {
+        return hours;
+    }
+
+    public int getMinutes() {
+        return minutes;
+    }
+
+    public int getSeconds() {
+        return seconds;
+    }
+
+    public int getTimezoneOffset() {
+        return timezoneOffset;
     }
 
     public String getMethod() {
@@ -209,6 +351,8 @@ public class ApacheAccessLog implements Serializable {
     public String getSafariVersion() {
         return safariVersion;
     }
+
+    private void setid() {}
 
     public void setClientID(String clientID) {
         this.clientID = clientID;
@@ -413,7 +557,8 @@ public class ApacheAccessLog implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("{" +
+        return String.format(//"{" +
+                        "\"id\" : %d, " +
                         "\"ip\" : %s, " +
                         "\"countryCode\" : %s, " +
                         "\"countryName\" : %s, " +
@@ -457,9 +602,9 @@ public class ApacheAccessLog implements Serializable {
                         "\"chromeName\" : %s, " +
                         "\"chromeVersion\" : %s, " +
                         "\"safariName\" : %s, " +
-                        "\"safariVersion\" : %s" +
-                        "}",
-                ip, countryCode, countryName, regionCode, regionName, city, postalCode,
+                        "\"safariVersion\" : %s"// +
+                       ,// "}",
+                id, ip, countryCode, countryName, regionCode, regionName, city, postalCode,
                 latitude, longitude, metroCode, areaCode, timezone, clientID, userID, dateTimeString,
                 timestamp, day, date, month, year, hours, minutes, seconds, timezoneOffset,
                 method, endpoint, protocolName, protocolVersion, responseCode, contentSize, link,
@@ -473,6 +618,7 @@ public class ApacheAccessLog implements Serializable {
 
         return jsonBuilder()
                 .startObject()
+                .field("id", id)
                 .field("ip", ip)
                 .field("countryCode", countryCode)
                 .field("countryName", countryName)
@@ -520,4 +666,5 @@ public class ApacheAccessLog implements Serializable {
                 .field("safariVersion", safariVersion)
                 .endObject();
     }
+
 }

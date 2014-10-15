@@ -7,6 +7,11 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
+import java.lang.reflect.AccessibleObject;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
 public class SparkCassandraConnector {
 
     public static void main(String[] args) {
@@ -31,6 +36,7 @@ public class SparkCassandraConnector {
                     "'replication_factor': 1" +
                     "};");
             session.execute("CREATE TABLE IF NOT EXISTS access.log (" +
+                    "id INT," +
                     "ip TEXT," +
                     "countryCode TEXT," +
                     "countryName TEXT," +
@@ -76,19 +82,32 @@ public class SparkCassandraConnector {
                     "chromeVersion TEXT," +
                     "safariName TEXT," +
                     "safariVersion TEXT," +
-                    "PRIMARY KEY (endPoint)" +
+                    "PRIMARY KEY (id)" +
                     ");");
         }
 
-        JavaRDD<XContentBuilder> javaRDD = sc.textFile(filename).map(x -> ApacheAccessLog.parseFromLogLine(x).toJSON());
-        javaRDD.foreach();
-        CassandraJavaUtil.javaFunctions(javaRDD, XContentBuilder.class).saveToCassandra("access", "log");
 
+
+        List<ApacheAccessLog> listlog = Arrays.asList(
+                new ApacheAccessLog(sc.textFile(filename)
+                        .map(x -> ApacheAccessLog.parseFromLogLine(x))
+                        .first()));
+        sc.textFile(filename)
+                .map(x -> ApacheAccessLog.parseFromLogLine(x))
+                .foreach(x -> listlog.add(x));
+
+
+//        JavaRDD<ApacheAccessLog> javaRDD = sc.parallelize(Listlog);
+  //      CassandraJavaUtil.javaFunctions(javaRDD, ApacheAccessLog.class).saveToCassandra("access", "log");
+
+        System.out.println(listlog.toString());
+  //      System.out.println(sc.textFile(filename).map(x -> ApacheAccessLog.parseFromLogLine(x)).first());
+/*
         JavaRDD<String> cassandraRowsRDD = CassandraJavaUtil.javaFunctions(sc)
                 .cassandraTable("access", "log")
                 .map(x -> x.toString());
         System.out.println("Data as CassandraRows: \n" + StringUtils.join(cassandraRowsRDD.toArray(), "\n"));
-
-        sc.stop();
+*/
+  //      sc.stop();
     }
 }

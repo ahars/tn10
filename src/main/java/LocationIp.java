@@ -12,19 +12,19 @@ public class LocationIp {
     private static final String PATH = "C:\\Users\\IPPON_2\\Desktop\\tn10\\sparky\\src\\data\\";
     private File file = new File(PATH + "GeoLiteCity.dat");
 
-    private String ip;
-    private String countryCode;
-    private String countryName;
-    private String regionCode;
-    private String regionName;
-    private String city;
-    private String postalCode;
-    private List<Float> lnglat;
-    private float latitude;
-    private float longitude;
-    private int metroCode;
-    private int areaCode;
-    private String timezone;
+    private String ip = null;
+    private String countryCode = null;
+    private String countryName = null;
+    private String regionCode = null;
+    private String regionName = null;
+    private String city = null;
+    private String postalCode = null;
+    private List<Float> lnglat = null;
+    private float latitude = 0;
+    private float longitude = 0;
+    private int metroCode = 0;
+    private int areaCode = 0;
+    private String timezone = null;
 
     public LocationIp(String ip) {
         this.ip = ip;
