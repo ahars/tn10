@@ -1,14 +1,11 @@
 
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
-import com.maxmind.geoip.regionName;
 import com.maxmind.geoip.timeZone;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-
 import java.io.File;
 import java.io.IOException;
-
-import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
+import java.util.LinkedList;
+import java.util.List;
 
 public class LocationIp {
 
@@ -18,10 +15,11 @@ public class LocationIp {
     private String ip;
     private String countryCode;
     private String countryName;
-    private String region;
-    private String regName;
+    private String regionCode;
+    private String regionName;
     private String city;
     private String postalCode;
+    private List<Float> lnglat;
     private float latitude;
     private float longitude;
     private int metroCode;
@@ -37,10 +35,13 @@ public class LocationIp {
 
             this.countryCode = l.countryCode;
             this.countryName = l.countryName;
-            this.region = l.region;
-            this.regName = regionName.regionNameByCode(l.countryCode, l.region);
+            this.regionCode = l.region;
+            this.regionName = com.maxmind.geoip.regionName.regionNameByCode(l.countryCode, l.region);
             this.city = l.city;
             this.postalCode = l.postalCode;
+            this.lnglat = new LinkedList<>();
+            this.lnglat.add(l.longitude);
+            this.lnglat.add(l.latitude);
             this.latitude = l.latitude;
             this.longitude = l.longitude;
             this.metroCode = l.metro_code;
@@ -54,33 +55,23 @@ public class LocationIp {
         }
     }
 
-    public String getIp() {
-        return ip;
-    }
+    public String getIp() { return ip; }
 
-    public String getCountryCode() {
-        return countryCode;
-    }
+    public String getCountryCode() { return countryCode; }
 
-    public String getCountryName() {
-        return countryName;
-    }
+    public String getCountryName() { return countryName; }
 
-    public String getRegion() {
-        return region;
-    }
+    public String getRegionCode() { return regionCode; }
 
-    public String getRegName() {
-        return regName;
-    }
+    public String getRegionName() { return regionName; }
 
-    public String getCity() {
-        return city;
-    }
+    public String getCity() { return city; }
 
     public String getPostalCode() {
         return postalCode;
     }
+
+    public List<Float> getLnglat() { return lnglat; }
 
     public float getLatitude() {
         return latitude;
@@ -114,12 +105,10 @@ public class LocationIp {
         this.countryName = countryName;
     }
 
-    public void setRegion(String region) {
-        this.region = region;
-    }
+    public void setRegionCode(String regionCode) { this.regionCode = regionCode; }
 
-    public void setRegName(String regName) {
-        this.regName = regName;
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
     }
 
     public void setCity(String city) {
@@ -129,6 +118,8 @@ public class LocationIp {
     public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
     }
+
+    public void setLngLat(List<Float> lnglat) { this.lnglat = lnglat; }
 
     public void setLatitude(float latitude) {
         this.latitude = latitude;
@@ -150,12 +141,8 @@ public class LocationIp {
         this.timezone = timezone;
     }
 
-    public Float[] getLngLat() {
-        return new Float[]{longitude, latitude};
-    }
-
     public String[] locationIpToIndexString() {
-        return new String[]{countryCode, countryName, region, regName, city, postalCode, String.valueOf(latitude),
+        return new String[]{countryCode, countryName, regionCode, regionName, city, postalCode, String.valueOf(latitude),
                 String.valueOf(longitude), String.valueOf(metroCode), String.valueOf(areaCode), timezone};
     }
 }

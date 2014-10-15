@@ -7,6 +7,7 @@ import java.lang.String;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,55 +16,114 @@ import java.util.regex.Pattern;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
-/**
- * This class represents an Apache access log line.
- * See http://httpd.apache.org/docs/2.2/logs.html for more details.
- */
 public class ApacheAccessLog implements Serializable {
 
     private static final Logger logger = Logger.getLogger("Access");
 
-    private LocationIp ip;
-    private String clientIdentd;
+    private String ip;
+    private String countryCode;
+    private String countryName;
+    private String regionCode;
+    private String regionName;
+    private String city;
+    private String postalCode;
+    private List<Float> lnglat;
+    private Float latitude;
+    private Float longitude;
+    private int metroCode;
+    private int areaCode;
+    private String timezone;
+    private String clientID;
     private String userID;
     private String dateTimeString;
+    private String timestamp;
+    private int day;
+    private int date;
+    private int month;
+    private int year;
+    private int hours;
+    private int minutes;
+    private int seconds;
+    private int timezoneOffset;
     private String method;
     private String endpoint;
-    private String protocol;
+    private String protocolName;
+    private String protocolVersion;
     private int responseCode;
     private long contentSize;
     private String link;
+    private String mozillaName;
     private String mozillaVersion;
-    private String os;
-    private String webkit;
-    private String renduHtml;
+    private String osType;
+    private String osName;
+    private String osVersion;
+    private String webkitType;
+    private String webkitVersion;
+    private String renduHtmlName;
+    private String renduHtmlType;
+    private String chromeName;
     private String chromeVersion;
+    private String safariName;
     private String safariVersion;
 
-    private ApacheAccessLog(String ip, String clientIdentd, String userID, String dateTime,
+    private ApacheAccessLog() {}
+
+    private ApacheAccessLog(String ip, String clientID, String userID, String dateString,
                             String method, String endpoint, String protocol, String responseCode,
-                            String contentSize, String link, String mozillaVersion, String os,
-                            String webkit, String renduHtml, String chromeVersion, String safariVersion) {
-        this.ip = new LocationIp(ip);
-        this.clientIdentd = clientIdentd;
+                            String contentSize, String link, String mozilla, String os,
+                            String webkit, String renduHtml, String chrome, String safari) {
+
+        LocationIp location = new LocationIp(ip);
+
+        this.ip = location.getIp();
+        this.countryCode = location.getCountryCode();
+        this.countryName = location.getCountryName();
+        this.regionCode = location.getRegionCode();
+        this.regionName = location.getRegionName();
+        this.city = location.getCity();
+        this.postalCode = location.getPostalCode();
+        this.lnglat = location.getLnglat();
+        this.latitude = location.getLatitude();
+        this.longitude = location.getLongitude();
+        this.metroCode = location.getMetroCode();
+        this.areaCode = location.getAreaCode();
+        this.timezone = location.getTimezone();
+        this.clientID = clientID;
         this.userID = userID;
-        this.dateTimeString = dateTime;
+        this.dateTimeString = getDateTimeToString(dateString)[0];
+        this.timestamp = getDateTimeToString(dateString)[1];
+        this.day = Integer.valueOf(getDateTimeToString(dateString)[2]);
+        this.date = Integer.valueOf(getDateTimeToString(dateString)[3]);
+        this.month = Integer.valueOf(getDateTimeToString(dateString)[4]);
+        this.year = Integer.valueOf(getDateTimeToString(dateString)[5]);
+        this.hours = Integer.valueOf(getDateTimeToString(dateString)[6]);
+        this.minutes = Integer.valueOf(getDateTimeToString(dateString)[7]);
+        this.seconds = Integer.valueOf(getDateTimeToString(dateString)[8]);
+        this.timezoneOffset = Integer.valueOf(getDateTimeToString(dateString)[9]);
         this.method = method;
         this.endpoint = endpoint;
-        this.protocol = protocol;
+        this.protocolName = getProtocolToString(protocol)[0];
+        this.protocolVersion = getProtocolToString(protocol)[1];
         this.responseCode = Integer.parseInt(responseCode);
-        this.contentSize = Long.parseLong(contentSize);
+        this.contentSize =  Long.parseLong(contentSize);
         this.link = link;
-        this.mozillaVersion = mozillaVersion;
-        this.os = os;
-        this.webkit = webkit;
-        this.renduHtml = renduHtml;
-        this.chromeVersion = chromeVersion;
-        this.safariVersion = safariVersion;
+        this.mozillaName = getMozillaToString(mozilla)[0];
+        this.mozillaVersion = getMozillaToString(mozilla)[1];
+        this.osType = getOsToString(os)[0];
+        this.osName = getOsToString(os)[1];
+        this.osVersion = getOsToString(os)[2];
+        this.webkitType = getWebkitToString(webkit)[0];
+        this.webkitVersion = getWebkitToString(webkit)[1];
+        this.renduHtmlName = getRenduHTMLToString(renduHtml)[0];
+        this.renduHtmlType = getRenduHTMLToString(renduHtml)[1];
+        this.chromeName = getChromeToString(chrome)[0];
+        this.chromeVersion = getChromeToString(chrome)[1];
+        this.safariName = getSafariToString(safari)[0];
+        this.safariVersion = getSafariToString(safari)[1];
     }
 
-    public String getClientIdentd() {
-        return clientIdentd;
+    public String getClientID() {
+        return clientID;
     }
 
     public String getUserID() {
@@ -82,8 +142,10 @@ public class ApacheAccessLog implements Serializable {
         return endpoint;
     }
 
-    public String getProtocol() {
-        return protocol;
+    public String getProtocolName() { return protocolName; }
+
+    public String getProtocolVersion() {
+        return protocolVersion;
     }
 
     public int getResponseCode() {
@@ -98,40 +160,75 @@ public class ApacheAccessLog implements Serializable {
         return link;
     }
 
+    public String getMozillaName() { return mozillaName; }
+
     public String getMozillaVersion() {
         return mozillaVersion;
     }
 
-    public String getOs() {
-        return os;
+    public String getOsType() {
+        return osType;
     }
 
-    public String getWebkit() {
-        return webkit;
+    public String getOsName() {
+        return osName;
     }
 
-    public String getRenduHtml() {
-        return renduHtml;
+    public String getOsVersion() {
+        return osVersion;
+    }
+
+    public String getWebkitType() {
+        return webkitType;
+    }
+
+    public String getWebkitVersion() {
+        return webkitVersion;
+    }
+
+    public String getRenduHtmlName() {
+        return renduHtmlName;
+    }
+
+    public String getRenduHtmlType() {
+        return renduHtmlType;
+    }
+
+    public String getChromeName() {
+        return chromeName;
     }
 
     public String getChromeVersion() {
         return chromeVersion;
     }
 
+    public String getSafariName() {
+        return safariName;
+    }
+
     public String getSafariVersion() {
         return safariVersion;
     }
 
-    public void setClientIdentd(String clientIdentd) {
-        this.clientIdentd = clientIdentd;
+    public void setClientID(String clientID) {
+        this.clientID = clientID;
     }
 
     public void setUserID(String userID) {
         this.userID = userID;
     }
 
-    public void setDateTimeString(String dateTimeString) {
-        this.dateTimeString = dateTimeString;
+    public void setDateTimeString(String dateString) {
+        this.dateTimeString = getDateTimeToString(dateString)[0];
+        this.timestamp = getDateTimeToString(dateString)[1];
+        this.day = Integer.valueOf(getDateTimeToString(dateString)[2]);
+        this.date = Integer.valueOf(getDateTimeToString(dateString)[3]);
+        this.month = Integer.valueOf(getDateTimeToString(dateString)[4]);
+        this.year = Integer.valueOf(getDateTimeToString(dateString)[5]);
+        this.hours = Integer.valueOf(getDateTimeToString(dateString)[6]);
+        this.minutes = Integer.valueOf(getDateTimeToString(dateString)[7]);
+        this.seconds = Integer.valueOf(getDateTimeToString(dateString)[8]);
+        this.timezoneOffset = Integer.valueOf(getDateTimeToString(dateString)[9]);
     }
 
     public void setMethod(String method) {
@@ -143,7 +240,8 @@ public class ApacheAccessLog implements Serializable {
     }
 
     public void setProtocol(String protocol) {
-        this.protocol = protocol;
+        this.protocolName = getProtocolToString(protocol)[0];
+        this.protocolVersion = getProtocolToString(protocol)[1];
     }
 
     public void setResponseCode(int responseCode) {
@@ -158,28 +256,35 @@ public class ApacheAccessLog implements Serializable {
         this.link = link;
     }
 
-    public void setMozillaVersion(String mozillaVersion) {
-        this.mozillaVersion = mozillaVersion;
+    public void setMozilla(String mozilla) {
+        this.mozillaName = getMozillaToString(mozilla)[0];
+        this.mozillaVersion = getMozillaToString(mozilla)[1];
     }
 
     public void setOs(String os) {
-        this.os = os;
+        this.osType = getOsToString(os)[0];
+        this.osName = getOsToString(os)[1];
+        this.osVersion = getOsToString(os)[2];
     }
 
     public void setWebkit(String webkit) {
-        this.webkit = webkit;
+        this.webkitType = getWebkitToString(webkit)[0];
+        this.webkitVersion = getWebkitToString(webkit)[1];
     }
 
     public void setRenduHtml(String renduHtml) {
-        this.renduHtml = renduHtml;
+        this.renduHtmlName = getRenduHTMLToString(renduHtml)[0];
+        this.renduHtmlType = getRenduHTMLToString(renduHtml)[1];
     }
 
-    public void setChromeVersion(String chromeVersion) {
-        this.chromeVersion = chromeVersion;
+    public void setChrome(String chrome) {
+        this.chromeName = getChromeToString(chrome)[0];
+        this.chromeVersion = getChromeToString(chrome)[1];
     }
 
-    public void setSafariVersion(String safariVersion) {
-        this.safariVersion = safariVersion;
+    public void setSafari(String safari) {
+        this.safariName = getSafariToString(safari)[0];
+        this.safariVersion = getSafariToString(safari)[1];
     }
 
     // Example Apache log line:
@@ -205,7 +310,7 @@ public class ApacheAccessLog implements Serializable {
                 m.group(11), m.group(12), m.group(13), m.group(14), m.group(15), m.group(16));
     }
 
-    private String[] getProtocolToString() {
+    private String[] getProtocolToString(String protocol) {
         Pattern pro = Pattern.compile("^(\\S+)/(\\S+)");
         Matcher mpro = pro.matcher(protocol);
 
@@ -216,7 +321,7 @@ public class ApacheAccessLog implements Serializable {
         return new String[]{mpro.group(1), mpro.group(2)};
     }
 
-    private String[] getWebkitToString() {
+    private String[] getWebkitToString(String webkit) {
         Pattern wk = Pattern.compile("^(\\S+)/(\\S+)");
         Matcher mwk = wk.matcher(webkit);
 
@@ -228,7 +333,7 @@ public class ApacheAccessLog implements Serializable {
         return new String[]{mwk.group(1), mwk.group(2)};
     }
 
-    private String[] getRenduHTMLToString() {
+    private String[] getRenduHTMLToString(String renduHtml) {
         Pattern rendu = Pattern.compile("^(\\S+), (\\S+) (\\S+)");
         Matcher mrendu = rendu.matcher(renduHtml);
 
@@ -240,43 +345,43 @@ public class ApacheAccessLog implements Serializable {
         return new String[]{mrendu.group(1), mrendu.group(3)};
     }
 
-    private String[] getChromeVersionToString() {
+    private String[] getChromeToString(String chrome) {
         Pattern chr = Pattern.compile("^(\\S+)/(\\S+)");
-        Matcher mchr = chr.matcher(chromeVersion);
+        Matcher mchr = chr.matcher(chrome);
 
         if (!mchr.find()) {
-            logger.log(Level.ALL, "Cannot parse chromeVersion " + chromeVersion);
-            throw new RuntimeException("Error parsing chromeVersion");
+            logger.log(Level.ALL, "Cannot parse chrome " + chrome);
+            throw new RuntimeException("Error parsing chrome");
         }
 
         return new String[]{mchr.group(1), mchr.group(2)};
     }
 
-    private String[] getSafariVersionToString() {
+    private String[] getSafariToString(String safari) {
         Pattern saf = Pattern.compile("^(\\S+)/(\\S+)");
-        Matcher msaf = saf.matcher(safariVersion);
+        Matcher msaf = saf.matcher(safari);
 
         if (!msaf.find()) {
-            logger.log(Level.ALL, "Cannot parse safariVersion " + safariVersion);
-            throw new RuntimeException("Error parsing safariVersion");
+            logger.log(Level.ALL, "Cannot parse safari " + safari);
+            throw new RuntimeException("Error parsing safari");
         }
 
         return new String[]{msaf.group(1), msaf.group(2)};
     }
 
-    private String[] getMozillaVersionToString() {
+    private String[] getMozillaToString(String mozilla) {
         Pattern moz = Pattern.compile("^(\\S+)/(\\S+)");
-        Matcher mmoz = moz.matcher(mozillaVersion);
+        Matcher mmoz = moz.matcher(mozilla);
 
         if (!mmoz.find()) {
-            logger.log(Level.ALL, "Cannot parse mozillaVersion " + mozillaVersion);
-            throw new RuntimeException("Error parsing mozillaVersion");
+            logger.log(Level.ALL, "Cannot parse mozilla " + mozilla);
+            throw new RuntimeException("Error parsing mozilla");
         }
 
         return new String[]{mmoz.group(1), mmoz.group(2)};
     }
 
-    private String[] getOsToString() {
+    private String[] getOsToString(String os) {
         Pattern pos = Pattern.compile("^(\\S+); (.*) (\\S+)");
         Matcher mos = pos.matcher(os);
 
@@ -288,18 +393,18 @@ public class ApacheAccessLog implements Serializable {
         return new String[]{mos.group(1), mos.group(2), mos.group(3)};
     }
 
-    private String[] getDateTimeToString() {
+    private String[] getDateTimeToString(String dateString) {
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MMM/yyyy:HH:mm:ss ZZZ", Locale.US);
         Date date = null;
 
         try {
-            date = formatter.parse(dateTimeString);
+            date = formatter.parse(dateString);
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        return new String[]{dateTimeString, String.valueOf(date.getTime()), String.valueOf(date.getDay()),
+        return new String[]{dateString, String.valueOf(date.getTime()), String.valueOf(date.getDay()),
                 String.valueOf(date.getDate()), String.valueOf(date.getMonth()),
                 String.valueOf(date.getYear() + 1900), String.valueOf(date.getHours()),
                 String.valueOf(date.getMinutes()), String.valueOf(date.getSeconds()),
@@ -309,28 +414,57 @@ public class ApacheAccessLog implements Serializable {
     @Override
     public String toString() {
         return String.format("{" +
-                        "\n\t\"geoip\" : %s," +
-                        "\n\t\"clientID\" : \"%s\"," +
-                        "\n\t\"userID\" : \"%s\"," +
-                        "\n\t\"date\" : %s," +
-                        "\n\t\"method\" : \"%s\"," +
-                        "\n\t\"endPoint\" : \"%s\"," +
-                        "\n\t\"protocol\" : %s," +
-                        "\n\t\"responseCode\" : \"%s\"," +
-                        "\n\t\"contentSize\" : \"%s\"," +
-                        "\n\t\"link\" : \"%s\"," +
-                        "\n\t\"mozillaVersion\" : %s," +
-                        "\n\t\"os\" : %s," +
-                        "\n\t\"kit\" : %s," +
-                        "\n\t\"renduHtml\" : %s," +
-                        "\n\t\"chromeVersion\" : %s," +
-                        "\n\t\"safariVersion\" : %s" +
-                        "\n}",
-                ip.locationIpToIndexString(), clientIdentd, userID, getDateTimeToString(),
-                method, endpoint, getProtocolToString(), responseCode, contentSize, link,
-                getMozillaVersionToString(), getOsToString(), getWebkitToString(),
-                getRenduHTMLToString(), getChromeVersionToString(),
-                getSafariVersionToString()
+                        "\"ip\" : %s, " +
+                        "\"countryCode\" : %s, " +
+                        "\"countryName\" : %s, " +
+                        "\"regionCode\" : %s, " +
+                        "\"regionName\" : %s, " +
+                        "\"city\" : %s, " +
+                        "\"postalCode\" : %s, " +
+                        "\"latitude\" : %s, " +
+                        "\"longitude\" : %s, " +
+                        "\"metroCode\" : %s, " +
+                        "\"areaCode\" : %s, " +
+                        "\"timezone\" : %s, " +
+                        "\"clientID\" : \"%s\", " +
+                        "\"userID\" : \"%s\", " +
+                        "\"dateTimeString\" : %s, " +
+                        "\"timestamp\" : %s, " +
+                        "\"day\" : %s, " +
+                        "\"date\" : %s, " +
+                        "\"month\" : %s, " +
+                        "\"year\" : %s, " +
+                        "\"hours\" : %s, " +
+                        "\"minutes\" : %s, " +
+                        "\"seconds\" : %s, " +
+                        "\"timezoneOffset\" : %s, " +
+                        "\"method\" : \"%s\", " +
+                        "\"endPoint\" : \"%s\", " +
+                        "\"protocolName\" : %s, " +
+                        "\"protocolVersion\" : %s, " +
+                        "\"responseCode\" : \"%s\", " +
+                        "\"contentSize\" : \"%s\", " +
+                        "\"link\" : \"%s\", " +
+                        "\"mozillaName\" : %s, " +
+                        "\"mozillaVersion\" : %s, " +
+                        "\"osType\" : %s, " +
+                        "\"osName\" : %s, " +
+                        "\"osVersion\" : %s, " +
+                        "\"webkitType\" : %s, " +
+                        "\"webkitVersion\" : %s, " +
+                        "\"renduHtmlName\" : %s, " +
+                        "\"renduHtmlType\" : %s, " +
+                        "\"chromeName\" : %s, " +
+                        "\"chromeVersion\" : %s, " +
+                        "\"safariName\" : %s, " +
+                        "\"safariVersion\" : %s" +
+                        "}",
+                ip, countryCode, countryName, regionCode, regionName, city, postalCode,
+                latitude, longitude, metroCode, areaCode, timezone, clientID, userID, dateTimeString,
+                timestamp, day, date, month, year, hours, minutes, seconds, timezoneOffset,
+                method, endpoint, protocolName, protocolVersion, responseCode, contentSize, link,
+                mozillaName, mozillaVersion, osType, osName, osVersion, webkitType, webkitVersion,
+                renduHtmlName, renduHtmlType, chromeName, chromeVersion, safariName, safariVersion
         );
 
     }
@@ -339,51 +473,51 @@ public class ApacheAccessLog implements Serializable {
 
         return jsonBuilder()
                 .startObject()
-                .field("ip", ip.getIp())
-                .field("countryCode", ip.getCountryCode())
-                .field("countryName", ip.getCountryName())
-                .field("region", ip.getRegion())
-                .field("regionName", ip.getRegName())
-                .field("city", ip.getCity())
-                .field("postalCode", ip.getPostalCode())
-                .field("lnglat", ip.getLngLat())
-                .field("latitude", ip.getLatitude())
-                .field("longitude", ip.getLongitude())
-                .field("metroCode", ip.getMetroCode())
-                .field("areaCode", ip.getAreaCode())
-                .field("timezone", ip.getTimezone())
-                .field("clientID", clientIdentd)
+                .field("ip", ip)
+                .field("countryCode", countryCode)
+                .field("countryName", countryName)
+                .field("regionCode", regionCode)
+                .field("regionName", regionName)
+                .field("city", city)
+                .field("postalCode", postalCode)
+                .field("lnglat", lnglat)
+                .field("latitude", latitude)
+                .field("longitude", longitude)
+                .field("metroCode", metroCode)
+                .field("areaCode", areaCode)
+                .field("timezone", timezone)
+                .field("clientID", clientID)
                 .field("userID", userID)
-                .field("dateTimeString", getDateTimeToString()[0])
-                .field("timestamp", getDateTimeToString()[1])
-                .field("day", Integer.valueOf(getDateTimeToString()[2]))
-                .field("date", Integer.valueOf(getDateTimeToString()[3]))
-                .field("month", Integer.valueOf(getDateTimeToString()[4]))
-                .field("year", Integer.valueOf(getDateTimeToString()[5]))
-                .field("hours", Integer.valueOf(getDateTimeToString()[6]))
-                .field("minutes", Integer.valueOf(getDateTimeToString()[7]))
-                .field("seconds", Integer.valueOf(getDateTimeToString()[8]))
-                .field("timezoneOffset", Integer.valueOf(getDateTimeToString()[9]))
+                .field("dateTimeString", dateTimeString)
+                .field("timestamp", timestamp)
+                .field("day", day)
+                .field("date", date)
+                .field("month", month)
+                .field("year", year)
+                .field("hours", hours)
+                .field("minutes", minutes)
+                .field("seconds", seconds)
+                .field("timezoneOffset", timezoneOffset)
                 .field("method", method)
                 .field("endPoint", endpoint)
-                .field("protocolName", getProtocolToString()[0])
-                .field("protocolVersion", getProtocolToString()[1])
+                .field("protocolName", protocolName)
+                .field("protocolVersion", protocolVersion)
                 .field("responseCode", responseCode)
                 .field("contentSize", contentSize)
                 .field("link", link)
-                .field("mozillaName", getMozillaVersionToString()[0])
-                .field("mozillaVersion", getMozillaVersionToString()[1])
-                .field("osType", getOsToString()[0])
-                .field("osName", getOsToString()[1])
-                .field("osVersion", getOsToString()[2])
-                .field("kitType", getWebkitToString()[0])
-                .field("kitVersion", getWebkitToString()[1])
-                .field("renduHtmlName", getRenduHTMLToString()[0])
-                .field("renduHtmlType", getRenduHTMLToString()[1])
-                .field("chromeName", getChromeVersionToString()[0])
-                .field("chromeVersion", getChromeVersionToString()[1])
-                .field("safariName", getSafariVersionToString()[0])
-                .field("safariVersion", getSafariVersionToString()[1])
+                .field("mozillaName", mozillaName)
+                .field("mozillaVersion", mozillaVersion)
+                .field("osType", osType)
+                .field("osName", osName)
+                .field("osVersion", osVersion)
+                .field("webkitType", webkitType)
+                .field("webkitVersion", webkitVersion)
+                .field("renduHtmlName", renduHtmlName)
+                .field("renduHtmlType", renduHtmlType)
+                .field("chromeName", chromeName)
+                .field("chromeVersion", chromeVersion)
+                .field("safariName", safariName)
+                .field("safariVersion", safariVersion)
                 .endObject();
     }
 }

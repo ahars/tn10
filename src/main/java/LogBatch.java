@@ -17,7 +17,7 @@ public class LogBatch {
                 .set("spark.serializer", KryoSerializer.class.getName());
         JavaSparkContext sc = new JavaSparkContext(conf);
 
-        sc.textFile(filename).foreach(x -> System.out.println(ApacheAccessLog.parseFromLogLine(x).toString()));
+        sc.textFile(filename).foreach(x -> System.out.println(ApacheAccessLog.parseFromLogLine(x).toJSON().string()));
         //sc.textFile(filename).map(ApacheAccessLog::parseFromLogLine).saveAsTextFile(PATH + "output");
 
         sc.stop();
