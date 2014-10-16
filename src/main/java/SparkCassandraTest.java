@@ -65,11 +65,16 @@ public class SparkCassandraTest {
                         .toArray(), "\n"));
 
         List<Person> people = Arrays.asList(
-                new Person(1, "John", new Date()),
-                new Person(2, "Troy", new Date()),
-                new Person(3, "Andrew", new Date())
+                new Person(1, "John", new Date())//,
+//                new Person(2, "Troy", new Date()),
+//                new Person(3, "Andrew", new Date())
         );
+        System.out.println(people.toString());
+
         JavaRDD<Person> rdd = sc.parallelize(people);
+        System.out.println(rdd.first().toString());
+
+
         CassandraJavaUtil.javaFunctions(rdd, Person.class).saveToCassandra("test", "people");
 
         System.out.println("Data as CassandraRows: \n" +

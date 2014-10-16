@@ -5,11 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-
-import java.lang.reflect.AccessibleObject;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 public class SparkCassandraConnector {
@@ -36,7 +32,7 @@ public class SparkCassandraConnector {
                     "'replication_factor': 1" +
                     "};");
             session.execute("CREATE TABLE IF NOT EXISTS access.log (" +
-                    "id INT," +
+                    "id INT PRIMARY KEY," +
                     "ip TEXT," +
                     "countryCode TEXT," +
                     "countryName TEXT," +
@@ -82,32 +78,42 @@ public class SparkCassandraConnector {
                     "chromeVersion TEXT," +
                     "safariName TEXT," +
                     "safariVersion TEXT," +
-                    "PRIMARY KEY (id)" +
+                    ");");
+
+            session.execute("CREATE TABLE IF NOT EXISTS access.logtest (" +
+                    "id INT PRIMARY KEY," +
+                    "ip TEXT" +
                     ");");
         }
 
+        List<logTest> list = sc.textFile(filename)
+                .map(x -> new logTest(ApacheAccessLog.parseFromLogLine(x).getID(), ApacheAccessLog.parseFromLogLine(x).getIp()))
+                .collect();
+        JavaRDD<logTest> rdd = sc.parallelize(list);
 
-
-        List<ApacheAccessLog> listlog = Arrays.asList(
-                new ApacheAccessLog(sc.textFile(filename)
-                        .map(x -> ApacheAccessLog.parseFromLogLine(x))
-                        .first()));
-        sc.textFile(filename)
-                .map(x -> ApacheAccessLog.parseFromLogLine(x))
-                .foreach(x -> listlog.add(x));
-
-
-//        JavaRDD<ApacheAccessLog> javaRDD = sc.parallelize(Listlog);
-  //      CassandraJavaUtil.javaFunctions(javaRDD, ApacheAccessLog.class).saveToCassandra("access", "log");
-
-        System.out.println(listlog.toString());
-  //      System.out.println(sc.textFile(filename).map(x -> ApacheAccessLog.parseFromLogLine(x)).first());
+        System.out.println(list.toString());
+        System.out.println(rdd.first().toString());
 /*
+        JavaRDD<logTest> rdd = sc.textFile(filename)
+                .map(x -> new logTest(ApacheAccessLog.parseFromLogLine(x).getID(), ApacheAccessLog.parseFromLogLine(x).getIp()));
+        System.out.println(rdd.first().toString());
+*/
+/*
+        JavaRDD<ApacheAccessLog> rdd = sc.textFile(filename)
+                .map(x -> ApacheAccessLog.parseFromLogLine(x))
+                .cache();
+        List<ApacheAccessLog> listAccess = rdd.collect();
+
+        System.out.println(listAccess.toString());
+        JavaRDD<ApacheAccessLog> rddd = sc.parallelize(listAccess);
+*/
+        CassandraJavaUtil.javaFunctions(rdd, logTest.class).saveToCassandra("access", "logtest");
+
         JavaRDD<String> cassandraRowsRDD = CassandraJavaUtil.javaFunctions(sc)
-                .cassandraTable("access", "log")
+                .cassandraTable("access", "logtest")
                 .map(x -> x.toString());
         System.out.println("Data as CassandraRows: \n" + StringUtils.join(cassandraRowsRDD.toArray(), "\n"));
-*/
-  //      sc.stop();
+
+        sc.stop();
     }
 }

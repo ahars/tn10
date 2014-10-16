@@ -19,7 +19,7 @@ import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 public class ApacheAccessLog implements Serializable {
 
     private static final Logger logger = Logger.getLogger("Access");
-    private static int id = 0;
+    private static Integer id = 0;
 
     private String ip = null;
     private String countryCode = null;
@@ -31,15 +31,15 @@ public class ApacheAccessLog implements Serializable {
     private List<Float> lnglat = null;
     private Float latitude = null;
     private Float longitude = null;
-    private int metroCode = 0;
-    private int areaCode = 0;
+    private Integer metroCode = 0;
+    private Integer areaCode = 0;
     private String timezone = null;
     private String clientID = null;
     private String userID = null;
     private String dateTimeString = null;
     private String timestamp = null;
-    private int day = 0;
-    private int date = 0;
+    private Integer day = 0;
+    private Integer date = 0;
     private int month = 0;
     private int year = 0;
     private int hours = 0;
@@ -76,7 +76,7 @@ public class ApacheAccessLog implements Serializable {
 
         LocationIp location = new LocationIp(ip);
 
-        this.id = getid();
+        this.id = getIDIncr();
         this.ip = location.getIp();
         this.countryCode = location.getCountryCode();
         this.countryName = location.getCountryName();
@@ -125,7 +125,7 @@ public class ApacheAccessLog implements Serializable {
     }
 
     public ApacheAccessLog(ApacheAccessLog x) {
-        this.id = x.getid();
+        this.id = x.getID();
         this.ip = x.getIp();
         this.countryCode = x.getCountryCode();
         this.countryName = x.getCountryName();
@@ -173,10 +173,12 @@ public class ApacheAccessLog implements Serializable {
         this.safariVersion = x.getSafariVersion();
     }
 
-    private int getid() {
+    private int getIDIncr() {
         this.id = this.id + 1;
         return id;
     }
+
+    public int getID() { return id; }
 
     public String getIp() {
         return ip;
@@ -558,51 +560,51 @@ public class ApacheAccessLog implements Serializable {
     @Override
     public String toString() {
         return String.format(//"{" +
-                        "\"id\" : %d, " +
-                        "\"ip\" : %s, " +
-                        "\"countryCode\" : %s, " +
-                        "\"countryName\" : %s, " +
-                        "\"regionCode\" : %s, " +
-                        "\"regionName\" : %s, " +
-                        "\"city\" : %s, " +
-                        "\"postalCode\" : %s, " +
-                        "\"latitude\" : %s, " +
-                        "\"longitude\" : %s, " +
-                        "\"metroCode\" : %s, " +
-                        "\"areaCode\" : %s, " +
-                        "\"timezone\" : %s, " +
-                        "\"clientID\" : \"%s\", " +
-                        "\"userID\" : \"%s\", " +
-                        "\"dateTimeString\" : %s, " +
-                        "\"timestamp\" : %s, " +
-                        "\"day\" : %s, " +
-                        "\"date\" : %s, " +
-                        "\"month\" : %s, " +
-                        "\"year\" : %s, " +
-                        "\"hours\" : %s, " +
-                        "\"minutes\" : %s, " +
-                        "\"seconds\" : %s, " +
-                        "\"timezoneOffset\" : %s, " +
-                        "\"method\" : \"%s\", " +
-                        "\"endPoint\" : \"%s\", " +
-                        "\"protocolName\" : %s, " +
-                        "\"protocolVersion\" : %s, " +
-                        "\"responseCode\" : \"%s\", " +
-                        "\"contentSize\" : \"%s\", " +
-                        "\"link\" : \"%s\", " +
-                        "\"mozillaName\" : %s, " +
-                        "\"mozillaVersion\" : %s, " +
-                        "\"osType\" : %s, " +
-                        "\"osName\" : %s, " +
-                        "\"osVersion\" : %s, " +
-                        "\"webkitType\" : %s, " +
-                        "\"webkitVersion\" : %s, " +
-                        "\"renduHtmlName\" : %s, " +
-                        "\"renduHtmlType\" : %s, " +
-                        "\"chromeName\" : %s, " +
-                        "\"chromeVersion\" : %s, " +
-                        "\"safariName\" : %s, " +
-                        "\"safariVersion\" : %s"// +
+                        "id : %d, " +
+                        "ip : %s, " +
+                        "countryCode : %s, " +
+                        "countryName : %s, " +
+                        "regionCode : %s, " +
+                        "regionName : %s, " +
+                        "city : %s, " +
+                        "postalCode : %s, " +
+                        "latitude : %s, " +
+                        "longitude : %s, " +
+                        "metroCode : %s, " +
+                        "areaCode : %s, " +
+                        "timezone : %s, " +
+                        "clientID : %s, " +
+                        "userID : %s, " +
+                        "dateTimeString : %s, " +
+                        "timestamp : %s, " +
+                        "day : %s, " +
+                        "date : %s, " +
+                        "month : %s, " +
+                        "year : %s, " +
+                        "hours : %s, " +
+                        "minutes : %s, " +
+                        "seconds : %s, " +
+                        "timezoneOffset : %s, " +
+                        "method : %s, " +
+                        "endPoint : %s, " +
+                        "protocolName : %s, " +
+                        "protocolVersion : %s, " +
+                        "responseCode : %s, " +
+                        "contentSize : %s, " +
+                        "link : %s, " +
+                        "mozillaName : %s, " +
+                        "mozillaVersion : %s, " +
+                        "osType : %s, " +
+                        "osName : %s, " +
+                        "osVersion : %s, " +
+                        "webkitType : %s, " +
+                        "webkitVersion : %s, " +
+                        "renduHtmlName : %s, " +
+                        "renduHtmlType : %s, " +
+                        "chromeName : %s, " +
+                        "chromeVersion : %s, " +
+                        "safariName : %s, " +
+                        "safariVersion : %s"// +
                        ,// "}",
                 id, ip, countryCode, countryName, regionCode, regionName, city, postalCode,
                 latitude, longitude, metroCode, areaCode, timezone, clientID, userID, dateTimeString,
