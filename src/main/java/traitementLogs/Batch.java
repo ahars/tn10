@@ -8,7 +8,10 @@ import formatLog.ParseFromCassandra;
 import formatLog.ParseFromLogLine;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.node.Node;
 
+import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 import static org.elasticsearch.spark.api.java.JavaEsSpark.saveJsonToEs;
 
 public class Batch {
@@ -26,6 +29,10 @@ public class Batch {
                 .set("spark.cassandra.connection.host", "localhost");
         JavaSparkContext sc = new JavaSparkContext(conf);
         System.out.println(sc.getConf().toDebugString());
+
+        /* Init ElasticSearch */
+        Node node = nodeBuilder().clusterName("elasticsearch").node();
+        Client client = node.client();
 
         /* Init Cassandra */
         CassandraConnector connector = CassandraConnector.apply(sc.getConf());
