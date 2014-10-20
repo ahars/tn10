@@ -1,4 +1,4 @@
-package technoTests;
+package traitementLogs;
 
 import com.datastax.driver.core.Session;
 import com.datastax.spark.connector.CassandraJavaUtil;
@@ -6,15 +6,12 @@ import com.datastax.spark.connector.cql.CassandraConnector;
 import formatLog.ApacheAccessLog;
 import formatLog.ParseFromCassandra;
 import formatLog.ParseFromLogLine;
-import org.apache.commons.lang.StringUtils;
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.elasticsearch.common.xcontent.XContentBuilder;
 
-import java.util.List;
+import static org.elasticsearch.spark.api.java.JavaEsSpark.saveJsonToEs;
 
-public class SparkCassandraConnector {
+public class Batch {
 
     public static void main(String[] args) {
 
@@ -22,14 +19,16 @@ public class SparkCassandraConnector {
         String filename = PATH + "\\sample.log";
 
         SparkConf conf = new SparkConf()
-                .setAppName("SparkToCassandra")
+                .setAppName("SparkBatch")
                 .setMaster("local")
+                .set("es.nodes", "localhost:9200")
+                .set("es.index.auto.create", "true")
                 .set("spark.cassandra.connection.host", "localhost");
         JavaSparkContext sc = new JavaSparkContext(conf);
-
-        CassandraConnector connector = CassandraConnector.apply(sc.getConf());
         System.out.println(sc.getConf().toDebugString());
 
+        /* Init Cassandra */
+        CassandraConnector connector = CassandraConnector.apply(sc.getConf());
         try (Session session = connector.openSession()) {
             session.execute("DROP KEYSPACE IF EXISTS access;");
             session.execute("CREATE KEYSPACE access " +
@@ -87,28 +86,12 @@ public class SparkCassandraConnector {
                     ");");
         }
 
-        List<ApacheAccessLog> list = sc.textFile(filename)
-                .map(x -> ParseFromLogLine.apacheAccessLogParse(x))
-                .collect();
-        JavaRDD<ApacheAccessLog> rdd = sc.parallelize(list);
+        /* Save into Cassandra from file */
+        CassandraJavaUtil.javaFunctions(sc.textFile(filename).map(x -> ParseFromLogLine.apacheAccessLogParse(x)),
+                ApacheAccessLog.class).saveToCassandra("access", "log");
 
-        System.out.println(list.toString());
-        System.out.println(rdd.first().toString());
-
-        CassandraJavaUtil.javaFunctions(rdd, ApacheAccessLog.class)
-                .saveToCassandra("access", "log");
-
-        JavaRDD<String> cassandraRowsRDD = CassandraJavaUtil.javaFunctions(sc)
-                .cassandraTable("access", "log")
-                .map(x -> x.toString());
-        System.out.println("Data as CassandraRows: \n" + StringUtils.join(cassandraRowsRDD.toArray(), "\n"));
-
-        JavaRDD<XContentBuilder> cassandraLogRDD = CassandraJavaUtil.javaFunctions(sc)
-                .cassandraTable("access", "log")
-                .map(x -> ParseFromCassandra.apacheAccessLogParse(x.toString()).toJSON());
-
-        cassandraLogRDD.foreach(x -> System.out.println(x.string()));
-
-        sc.stop();
+        /* Save into ElasticSearch from Cassandra */
+        saveJsonToEs(CassandraJavaUtil.javaFunctions(sc).cassandraTable("access", "log")
+                .map(x -> ParseFromCassandra.apacheAccessLogParse(x.toString()).toJSON().string()), "sparky/Batch");
     }
 }
