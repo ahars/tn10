@@ -5,17 +5,27 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ParseFromLogLine {
+public interface ParseFromLogLine {
 
-    private static final Logger logger = Logger.getLogger("ParseFromLogLine");
+    static final Logger logger = Logger.getLogger("ParseFromLogLine");
 
-    // 1:ip 2:client_id 3:user_id 4:date_time 5:method 6:req 7:protocol 8:respcode 9:size 10:link 11:mozilla
-    // 12:os 13:webkit 14:rendh_html 15:chrome 16:safari
-    private static final String APACHE_ACCESS_LOG_PATTERN =
-            "^(\\S+) (\\S+) (\\S+) \\[([\\w:/]+\\s[+\\-]\\d{4})\\] \"(\\S+) (\\S+) (\\S+)\" (\\d{3}) (\\d+) " +
-                    "\"(\\S+)\" \"(\\S+) \\((\\S+\\s\\S+\\s\\S+\\s\\S+\\s\\S+\\s\\S+)\\) (\\S+) " +
-                    "\\((\\S+, \\S+ \\S+)\\) (\\S+) (\\S+)\"$";
-    private static final Pattern PATTERN = Pattern.compile(APACHE_ACCESS_LOG_PATTERN);
+    static final String APACHE_ACCESS_LOG_PATTERN = "^(\\S+) " +    // 1:ip
+            "(\\S+) " +     // 2:client_id
+            "(\\S+) " +     // 3:user_id
+            "\\[([\\w:/]+\\s[+\\-]\\d{4})\\] " +    // 4:date_time
+            "\"(\\S+) " +   // 5:method
+            "(\\S+) " +     // 6:req
+            "(\\S+)\" " +   // 7:protocol
+            "(\\d{3}) " +   // 8:respcode
+            "(\\d+) " +     // 9:size
+            "\"(\\S+)\" " + // 10:link
+            "\"(\\S+) " +   // 11:mozilla
+            "\\((\\S+\\s\\S+\\s\\S+\\s\\S+\\s\\S+\\s\\S+)\\) " +    // 12:os
+            "(\\S+) " +     // 13:webkit
+            "\\((\\S+, \\S+ \\S+)\\) " +    // 14:rendu_html
+            "(\\S+) " +     // 15:chrome
+            "(\\S+)\"$";    // 16:safari
+    static final Pattern PATTERN = Pattern.compile(APACHE_ACCESS_LOG_PATTERN);
 
     public static ApacheAccessLog apacheAccessLogParse(String logline) {
         Matcher m = PATTERN.matcher(logline);

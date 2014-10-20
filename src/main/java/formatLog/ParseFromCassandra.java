@@ -5,11 +5,11 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ParseFromCassandra {
+public interface ParseFromCassandra {
 
-    private static final Logger logger = Logger.getLogger("ParseFromLogLine");
+    static final Logger logger = Logger.getLogger("ParseFromLogLine");
 
-    private static final String CASSANDRA_APACHE_ACCESS_LOG_PATTERN =
+    static final String CASSANDRA_APACHE_ACCESS_LOG_PATTERN =
             "^CassandraRow\\{" +
                     "(\\S+): (\\S+), " +    // 2:id
                     "(\\S+): (\\S+), " +    // 4:area_code
@@ -58,7 +58,7 @@ public class ParseFromCassandra {
                     "(\\S+): (\\S+), " +    // 91:webkit_version
                     "(\\S+): (\\S+)" +      // 93:year
                     "\\}$";
-    private static final Pattern PATTERN = Pattern.compile(CASSANDRA_APACHE_ACCESS_LOG_PATTERN);
+    static final Pattern PATTERN = Pattern.compile(CASSANDRA_APACHE_ACCESS_LOG_PATTERN);
 
     public static ApacheAccessLog apacheAccessLogParse(String cassandraRow) {
         Matcher m = PATTERN.matcher(cassandraRow);

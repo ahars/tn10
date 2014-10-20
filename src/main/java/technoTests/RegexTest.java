@@ -4,7 +4,7 @@ import formatLog.ParseFromLogLine;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 
-public class RegexTest {
+public class RegexTest implements ParseFromLogLine {
 
     public static void main(String[] args) {
 
@@ -18,9 +18,7 @@ public class RegexTest {
         System.out.println(sc.getConf().toDebugString());
 
         String _1 = sc.textFile(filename).first();
-        if (_1.matches("^(\\S+) (\\S+) (\\S+) \\[([\\w:/]+\\s[+\\-]\\d{4})\\] \"(\\S+) (\\S+) (\\S+)\" (\\d{3}) (\\d+) " +
-                "\"(\\S+)\" \"(\\S+) \\((\\S+\\s\\S+\\s\\S+\\s\\S+\\s\\S+\\s\\S+)\\) (\\S+) " +
-                "\\((\\S+, \\S+ \\S+)\\) (\\S+) (\\S+)\"$")) {
+        if (_1.matches(APACHE_ACCESS_LOG_PATTERN)) {
             System.out.println(ParseFromLogLine.apacheAccessLogParse(_1).toString());
         } else {
             System.out.println("logFormat non reconnu");
