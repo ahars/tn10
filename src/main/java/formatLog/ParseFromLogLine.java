@@ -14,7 +14,7 @@ public class ParseFromLogLine {
     private static final String APACHE_ACCESS_LOG_PATTERN =
             "^(\\S+) (\\S+) (\\S+) \\[([\\w:/]+\\s[+\\-]\\d{4})\\] \"(\\S+) (\\S+) (\\S+)\" (\\d{3}) (\\d+) " +
                     "\"(\\S+)\" \"(\\S+) \\((\\S+\\s\\S+\\s\\S+\\s\\S+\\s\\S+\\s\\S+)\\) (\\S+) " +
-                    "\\((\\S+, \\S+ \\S+)\\) (\\S+) (\\S+)\"";
+                    "\\((\\S+, \\S+ \\S+)\\) (\\S+) (\\S+)\"$";
     private static final Pattern PATTERN = Pattern.compile(APACHE_ACCESS_LOG_PATTERN);
 
     public static ApacheAccessLog apacheAccessLogParse(String logline) {
