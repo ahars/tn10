@@ -5,7 +5,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import java.util.Arrays;
 import java.util.List;
 
 public class SparkCassandraConnector {
@@ -34,21 +33,21 @@ public class SparkCassandraConnector {
             session.execute("CREATE TABLE IF NOT EXISTS access.log (" +
                     "id INT PRIMARY KEY," +
                     "ip TEXT," +
-                    "countryCode TEXT," +
-                    "countryName TEXT," +
-                    "region TEXT," +
-                    "regionName TEXT," +
+                    "country_code TEXT," +
+                    "country_name TEXT," +
+                    "region_code TEXT," +
+                    "region_name TEXT," +
                     "city TEXT," +
-                    "postalCode TEXT," +
+                    "postal_code TEXT," +
                     "lnglat LIST<FLOAT>," +
                     "latitude FLOAT," +
                     "longitude FLOAT," +
-                    "metroCode INT," +
-                    "areaCode INT," +
+                    "metro_code INT," +
+                    "area_code INT," +
                     "timezone TEXT," +
-                    "clientID TEXT," +
-                    "userID TEXT," +
-                    "dateTimeString TEXT," +
+                    "client_id TEXT," +
+                    "user_id TEXT," +
+                    "date_time_string TEXT," +
                     "timestamp TEXT," +
                     "day INT," +
                     "date INT," +
@@ -57,60 +56,40 @@ public class SparkCassandraConnector {
                     "hours INT," +
                     "minutes INT," +
                     "seconds INT," +
-                    "timezoneOffset INT," +
+                    "timezone_offset INT," +
                     "method TEXT," +
                     "endPoint TEXT," +
-                    "protocolName TEXT," +
-                    "protocolVersion TEXT," +
-                    "responseCode INT," +
-                    "contentSize INT," +
+                    "protocol_name TEXT," +
+                    "protocol_version TEXT," +
+                    "response_code INT," +
+                    "content_size INT," +
                     "link TEXT," +
-                    "mozillaName TEXT," +
-                    "mozillaVersion TEXT," +
-                    "osType TEXT," +
-                    "osName TEXT," +
-                    "osVersion TEXT," +
-                    "webkitType TEXT," +
-                    "webkitVersion TEXT," +
-                    "renduHtmlName TEXT," +
-                    "renduHtmlType TEXT," +
-                    "chromeName TEXT," +
-                    "chromeVersion TEXT," +
-                    "safariName TEXT," +
-                    "safariVersion TEXT," +
-                    ");");
-
-            session.execute("CREATE TABLE IF NOT EXISTS access.logtest (" +
-                    "id INT PRIMARY KEY," +
-                    "ip TEXT" +
+                    "mozilla_name TEXT," +
+                    "mozilla_version TEXT," +
+                    "os_type TEXT," +
+                    "os_name TEXT," +
+                    "os_version TEXT," +
+                    "webkit_type TEXT," +
+                    "webkit_version TEXT," +
+                    "rendu_html_name TEXT," +
+                    "rendu_html_type TEXT," +
+                    "chrome_name TEXT," +
+                    "chrome_version TEXT," +
+                    "safari_name TEXT," +
+                    "safari_version TEXT" +
                     ");");
         }
 
-        List<logTest> list = sc.textFile(filename)
-                .map(x -> new logTest(ApacheAccessLog.parseFromLogLine(x).getID(), ApacheAccessLog.parseFromLogLine(x).getIp()))
-                .collect();
-        JavaRDD<logTest> rdd = sc.parallelize(list);
+        List<ApacheAccessLog> list = sc.textFile(filename).map(x -> ApacheAccessLog.parseFromLogLine(x)).collect();
+        JavaRDD<ApacheAccessLog> rdd = sc.parallelize(list);
 
         System.out.println(list.toString());
         System.out.println(rdd.first().toString());
-/*
-        JavaRDD<logTest> rdd = sc.textFile(filename)
-                .map(x -> new logTest(ApacheAccessLog.parseFromLogLine(x).getID(), ApacheAccessLog.parseFromLogLine(x).getIp()));
-        System.out.println(rdd.first().toString());
-*/
-/*
-        JavaRDD<ApacheAccessLog> rdd = sc.textFile(filename)
-                .map(x -> ApacheAccessLog.parseFromLogLine(x))
-                .cache();
-        List<ApacheAccessLog> listAccess = rdd.collect();
 
-        System.out.println(listAccess.toString());
-        JavaRDD<ApacheAccessLog> rddd = sc.parallelize(listAccess);
-*/
-        CassandraJavaUtil.javaFunctions(rdd, logTest.class).saveToCassandra("access", "logtest");
+        CassandraJavaUtil.javaFunctions(rdd, ApacheAccessLog.class).saveToCassandra("access", "log");
 
         JavaRDD<String> cassandraRowsRDD = CassandraJavaUtil.javaFunctions(sc)
-                .cassandraTable("access", "logtest")
+                .cassandraTable("access", "log")
                 .map(x -> x.toString());
         System.out.println("Data as CassandraRows: \n" + StringUtils.join(cassandraRowsRDD.toArray(), "\n"));
 
