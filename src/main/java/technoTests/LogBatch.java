@@ -1,3 +1,6 @@
+package technoTests;
+
+import formatLog.ApacheAccessLog;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.serializer.KryoSerializer;
@@ -16,6 +19,7 @@ public class LogBatch {
                 .set("spark.files.overwrite", "true")
                 .set("spark.serializer", KryoSerializer.class.getName());
         JavaSparkContext sc = new JavaSparkContext(conf);
+        System.out.println(sc.getConf().toDebugString());
 
         sc.textFile(filename).foreach(x -> System.out.println(ApacheAccessLog.parseFromLogLine(x).toJSON().string()));
         //sc.textFile(filename).map(ApacheAccessLog::parseFromLogLine).saveAsTextFile(PATH + "output");

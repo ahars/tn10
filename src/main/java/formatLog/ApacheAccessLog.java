@@ -1,4 +1,5 @@
-import com.datastax.spark.connector.types.TimeUUIDType;
+package formatLog;
+
 import org.apache.cassandra.utils.UUIDGen;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 

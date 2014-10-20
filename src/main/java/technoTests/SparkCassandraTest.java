@@ -1,3 +1,5 @@
+package technoTests;
+
 import com.datastax.driver.core.Session;
 import com.datastax.spark.connector.CassandraJavaUtil;
 import com.datastax.spark.connector.cql.CassandraConnector;

@@ -1,3 +1,5 @@
+package technoTests;
+
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.node.Node;

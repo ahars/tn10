@@ -1,3 +1,5 @@
+package technoTests;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 
@@ -11,7 +13,10 @@ public class ArbreBatch {
                 .setAppName("SparkArbreBatch")
                 .setMaster("local");
         JavaSparkContext sc = new JavaSparkContext(conf);
+        System.out.println(sc.getConf().toDebugString());
 
         String filename = PATH + "\\arbresalignementparis2010.csv";
+
+        // TODO
     }
 }

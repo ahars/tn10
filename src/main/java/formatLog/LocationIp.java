@@ -1,3 +1,4 @@
+package formatLog;
 
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
@@ -56,87 +57,74 @@ public class LocationIp {
     }
 
     public String getIp() { return ip; }
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
 
     public String getCountryCode() { return countryCode; }
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
 
     public String getCountryName() { return countryName; }
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
+    }
 
     public String getRegionCode() { return regionCode; }
+    public void setRegionCode(String regionCode) { this.regionCode = regionCode; }
 
     public String getRegionName() { return regionName; }
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
+    }
 
     public String getCity() { return city; }
+    public void setCity(String city) {
+        this.city = city;
+    }
 
     public String getPostalCode() {
         return postalCode;
     }
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
 
     public List<Float> getLnglat() { return lnglat; }
+    public void setLngLat(List<Float> lnglat) { this.lnglat = lnglat; }
 
     public float getLatitude() {
         return latitude;
+    }
+    public void setLatitude(float latitude) {
+        this.latitude = latitude;
     }
 
     public float getLongitude() {
         return longitude;
     }
+    public void setLongitude(float longitude) {
+        this.longitude = longitude;
+    }
 
     public int getMetroCode() {
         return metroCode;
+    }
+    public void setMetroCode(int metroCode) {
+        this.metroCode = metroCode;
     }
 
     public int getAreaCode() {
         return areaCode;
     }
-
-    public String getTimezone() {
-        return timezone;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    public void setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
-    }
-
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
-    }
-
-    public void setRegionCode(String regionCode) { this.regionCode = regionCode; }
-
-    public void setRegionName(String regionName) {
-        this.regionName = regionName;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public void setPostalCode(String postalCode) {
-        this.postalCode = postalCode;
-    }
-
-    public void setLngLat(List<Float> lnglat) { this.lnglat = lnglat; }
-
-    public void setLatitude(float latitude) {
-        this.latitude = latitude;
-    }
-
-    public void setLongitude(float longitude) {
-        this.longitude = longitude;
-    }
-
-    public void setMetroCode(int metroCode) {
-        this.metroCode = metroCode;
-    }
-
     public void setAreaCode(int areaCode) {
         this.areaCode = areaCode;
     }
 
+    public String getTimezone() {
+        return timezone;
+    }
     public void setTimezone(String timezone) {
         this.timezone = timezone;
     }

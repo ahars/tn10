@@ -1,3 +1,6 @@
+package technoTests;
+
+import formatLog.ApacheAccessLog;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -17,6 +20,7 @@ public class SparkWriteToES {
                 .set("es.nodes", "localhost:9200")
                 .set("es.index.auto.create", "true");
         JavaSparkContext sc = new JavaSparkContext(conf);
+        System.out.println(sc.getConf().toDebugString());
 
         JavaRDD<String> javaRDD = sc.textFile(filename)
                 .map(x -> ApacheAccessLog.parseFromLogLine(x).toJSON().string())
