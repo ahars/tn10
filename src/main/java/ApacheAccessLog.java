@@ -1,3 +1,5 @@
+import com.datastax.spark.connector.types.TimeUUIDType;
+import org.apache.cassandra.utils.UUIDGen;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
 import java.io.IOException;
@@ -7,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -26,7 +29,7 @@ public class ApacheAccessLog implements Serializable {
                     "\\((\\S+, \\S+ \\S+)\\) (\\S+) (\\S+)\"";
     private static final Pattern PATTERN = Pattern.compile(LOG_ENTRY_PATTERN);
 
-    private static Integer id = 0;
+    private UUID id = null;
     private String ip = null;
     private String country_code = null;
     private String country_name = null;
@@ -80,7 +83,7 @@ public class ApacheAccessLog implements Serializable {
 
         LocationIp location = new LocationIp(ip);
 
-        this.id = getIDIncr();
+        this.id = UUIDGen.getTimeUUID();
         this.ip = location.getIp();
         this.country_code = location.getCountryCode();
         this.country_name = location.getCountryName();
@@ -191,8 +194,8 @@ public class ApacheAccessLog implements Serializable {
     }
 
 
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
+    public UUID getId() { return id; }
+    public void setId() { this.id = UUIDGen.getTimeUUID(); }
 
     public String getIp() { return ip; }
     public void setIp(String ip) { this.ip = ip; }
@@ -328,11 +331,6 @@ public class ApacheAccessLog implements Serializable {
 
     public String getSafari_version() { return safari_version; }
     public void setSafari_version(String safari_version) { this.safari_version = safari_version; }
-
-    private int getIDIncr() {
-        this.id = this.id + 1;
-        return id;
-    }
 
     private String[] getDate_timeToString(String dateString) {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MMM/yyyy:HH:mm:ss ZZZ", Locale.US);
@@ -486,11 +484,11 @@ public class ApacheAccessLog implements Serializable {
                         "mozilla_version = %s, os_type = %s, os_name = %s, os_version = %s, webkit_type = %s, " +
                         "webkit_version = %s, rendu_html_name = %s, rendu_html_type = %s, chrome_name = %s, " +
                         "chrome_version = %s, safari_name = %s, safari_version = %s",
-                id, ip, country_code, country_name, region_code, region_name, city, postal_code, lnglat, latitude,
-                longitude, metro_code, area_code, client_id, user_id, date_time_string, timestamp, day, date, month,
-                year, hours, minutes, seconds, timezone_offset, method, endpoint, protocol_name, protocol_version,
-                response_code, content_size, link, mozilla_name, mozilla_version, os_type, os_name, os_version,
-                webkit_type, webkit_version, rendu_html_name, rendu_html_type, chrome_name, chrome_version,
+                id.hashCode(), ip, country_code, country_name, region_code, region_name, city, postal_code, lnglat,
+                latitude, longitude, metro_code, area_code, client_id, user_id, date_time_string, timestamp, day,
+                date, month, year, hours, minutes, seconds, timezone_offset, method, endpoint, protocol_name,
+                protocol_version, response_code, content_size, link, mozilla_name, mozilla_version, os_type, os_name,
+                os_version, webkit_type, webkit_version, rendu_html_name, rendu_html_type, chrome_name, chrome_version,
                 safari_name, safari_version);
     }
 

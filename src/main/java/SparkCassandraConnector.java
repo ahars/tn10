@@ -31,7 +31,7 @@ public class SparkCassandraConnector {
                     "'replication_factor': 1" +
                     "};");
             session.execute("CREATE TABLE IF NOT EXISTS access.log (" +
-                    "id INT PRIMARY KEY," +
+                    "id TIMEUUID PRIMARY KEY," +
                     "ip TEXT," +
                     "country_code TEXT," +
                     "country_name TEXT," +
