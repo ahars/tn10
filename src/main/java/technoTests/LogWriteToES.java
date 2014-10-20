@@ -1,6 +1,6 @@
 package technoTests;
 
-import formatLog.ApacheAccessLog;
+import formatLog.ParseFromLogLine;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -28,7 +28,7 @@ public class LogWriteToES {
         JavaSparkContext sc = new JavaSparkContext(conf);
         System.out.println(sc.getConf().toDebugString());
 
-        JavaRDD<String> javaRDD = sc.textFile(filename).map(x -> ApacheAccessLog.parseFromLogLine(x).toString());
+        JavaRDD<String> javaRDD = sc.textFile(filename).map(x -> ParseFromLogLine.apacheAccessLogParse(x).toString());
         System.out.println(javaRDD.first().toString());
 
         Node node = nodeBuilder().clusterName("elasticsearch").node();

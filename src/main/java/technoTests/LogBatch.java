@@ -1,6 +1,6 @@
 package technoTests;
 
-import formatLog.ApacheAccessLog;
+import formatLog.ParseFromLogLine;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.serializer.KryoSerializer;
@@ -21,7 +21,8 @@ public class LogBatch {
         JavaSparkContext sc = new JavaSparkContext(conf);
         System.out.println(sc.getConf().toDebugString());
 
-        sc.textFile(filename).foreach(x -> System.out.println(ApacheAccessLog.parseFromLogLine(x).toJSON().string()));
+        sc.textFile(filename)
+                .foreach(x -> System.out.println(ParseFromLogLine.apacheAccessLogParse(x).toJSON().string()));
         //sc.textFile(filename).map(ApacheAccessLog::parseFromLogLine).saveAsTextFile(PATH + "output");
 
         sc.stop();

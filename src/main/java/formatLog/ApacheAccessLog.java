@@ -7,10 +7,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -21,14 +18,6 @@ import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 public class ApacheAccessLog implements Serializable {
 
     private static final Logger logger = Logger.getLogger("Access");
-
-    // 1:IP 2:client 3:user 4:date_time 5:method 6:req 7:proto 8:respcode 9:size 10:link 11:mozillaVersion
-    // 12:os 13:webkit 14:rendhHtml 15:chromeVersion 16:safariVersion
-    private static final String LOG_ENTRY_PATTERN =
-            "^(\\S+) (\\S+) (\\S+) \\[([\\w:/]+\\s[+\\-]\\d{4})\\] \"(\\S+) (\\S+) (\\S+)\" (\\d{3}) (\\d+) " +
-                    "\"(\\S+)\" \"(\\S+) \\((\\S+\\s\\S+\\s\\S+\\s\\S+\\s\\S+\\s\\S+)\\) (\\S+) " +
-                    "\\((\\S+, \\S+ \\S+)\\) (\\S+) (\\S+)\"";
-    private static final Pattern PATTERN = Pattern.compile(LOG_ENTRY_PATTERN);
 
     private UUID id = null;
     private String ip = null;
@@ -182,16 +171,65 @@ public class ApacheAccessLog implements Serializable {
         this.safari_version = log.getSafari_version();
     }
 
-    public static ApacheAccessLog parseFromLogLine(String logline) {
-        Matcher m = PATTERN.matcher(logline);
-        if (!m.find()) {
-            logger.log(Level.ALL, "Cannot parse logline" + logline);
-            throw new RuntimeException("Error parsing logline");
-        }
+    public ApacheAccessLog(String id, String area_code, String chrome_name, String chrome_version, String city,
+                           String client_id, String content_size, String country_code, String country_name,
+                           String date, String date_time_string, String day, String endpoint, String hours,
+                           String ip, String latitude, String link, String lnglat, String longitude, String method,
+                           String metro_code, String minutes, String month, String mozilla_name, String mozilla_version,
+                           String os_name, String os_type, String os_version, String postal_code, String protocol_name,
+                           String protocol_version, String region_code, String region_name, String rendu_html_name,
+                           String rendu_html_type, String response_code, String safari_name, String safari_version,
+                           String seconds, String timestamp, String timezone, String timezone_offset, String user_id,
+                           String webkit_type, String webkit_version, String year) {
 
-        return new ApacheAccessLog(m.group(1), m.group(2), m.group(3), m.group(4),
-                m.group(5), m.group(6), m.group(7), m.group(8), m.group(9), m.group(10),
-                m.group(11), m.group(12), m.group(13), m.group(14), m.group(15), m.group(16));
+        this.id = UUID.fromString(id);
+        this.ip = ip;
+        this.country_code = country_code;
+        this.country_name = country_name;
+        this.region_code = region_code;
+        this.region_name = region_name;
+        this.city = city;
+        this.postal_code = postal_code;
+        this.latitude = Float.parseFloat(latitude);
+        this.longitude = Float.parseFloat(longitude);
+        this.lnglat = new ArrayList<Float>();
+        this.lnglat.add(this.longitude);
+        this.lnglat.add(this.latitude);
+        this.metro_code = Integer.getInteger(metro_code);
+        this.area_code = Integer.getInteger(area_code);
+        this.timezone = timezone;
+        this.client_id = client_id;
+        this.user_id = user_id;
+        this.date_time_string = date_time_string;
+        this.timestamp = timestamp;
+        this.day = Integer.valueOf(day);
+        this.date = Integer.valueOf(date);
+        this.month = Integer.valueOf(month);
+        this.year = Integer.valueOf(year);
+        this.hours = Integer.valueOf(hours);
+        this.minutes = Integer.valueOf(minutes);
+        this.seconds = Integer.valueOf(seconds);
+        this.timezone_offset = Integer.valueOf(timezone_offset);
+        this.method = method;
+        this.endpoint = endpoint;
+        this.protocol_name = protocol_name;
+        this.protocol_version = protocol_version;
+        this.response_code = Integer.parseInt(response_code);
+        this.content_size = Integer.parseInt(content_size);
+        this.link = link;
+        this.mozilla_name = mozilla_name;
+        this.mozilla_version = mozilla_version;
+        this.os_type = os_type;
+        this.os_name = os_name;
+        this.os_version = os_version;
+        this.webkit_type = webkit_type;
+        this.webkit_version = webkit_version;
+        this.rendu_html_name = rendu_html_name;
+        this.rendu_html_type = rendu_html_type;
+        this.chrome_name = chrome_name;
+        this.chrome_version = chrome_version;
+        this.safari_name = safari_name;
+        this.safari_version = safari_version;
     }
 
 
