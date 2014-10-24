@@ -1,20 +1,22 @@
-package traitementLogs;
+package technoTests;
 
 import com.datastax.driver.core.Session;
 import com.datastax.spark.connector.CassandraJavaUtil;
 import com.datastax.spark.connector.cql.CassandraConnector;
-import formatLog.ApacheAccessLog;
+import formatLog.Log;
 import formatLog.ParseFromCassandra;
 import formatLog.ParseFromLogLine;
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.node.Node;
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 import static org.elasticsearch.spark.api.java.JavaEsSpark.saveJsonToEs;
 
-public class Batch {
+public class OthersLogBatchTest {
 
     public static void main(String[] args) {
 
@@ -22,7 +24,7 @@ public class Batch {
         String filename = PATH + "\\sample.log";
 
         SparkConf conf = new SparkConf()
-                .setAppName("SparkBatch")
+                .setAppName("OthersLogBatchTest")
                 .setMaster("local")
                 .set("es.nodes", "localhost:9200")
                 .set("es.index.auto.create", "true")
@@ -45,7 +47,7 @@ public class Batch {
                     "};");
             session.execute("CREATE TABLE IF NOT EXISTS access.log (" +
                     "id TIMEUUID PRIMARY KEY," +
-                    "ip TEXT," +
+                    "ip_adress TEXT," +
                     "country_code TEXT," +
                     "country_name TEXT," +
                     "region_code TEXT," +
@@ -60,6 +62,7 @@ public class Batch {
                     "timezone TEXT," +
                     "client_id TEXT," +
                     "user_id TEXT," +
+                    "date_time MAP<TEXT, TEXT>," +
                     "date_time_string TEXT," +
                     "timestamp TEXT," +
                     "day INT," +
@@ -76,30 +79,22 @@ public class Batch {
                     "protocol_version TEXT," +
                     "response_code INT," +
                     "content_size INT," +
-                    "link TEXT," +
-                    "mozilla_name TEXT," +
-                    "mozilla_version TEXT," +
-                    "os_type TEXT," +
-                    "os_name TEXT," +
-                    "os_version TEXT," +
-                    "webkit_type TEXT," +
-                    "webkit_version TEXT," +
-                    "rendu_html_name TEXT," +
-                    "rendu_html_type TEXT," +
-                    "chrome_name TEXT," +
-                    "chrome_version TEXT," +
-                    "safari_name TEXT," +
-                    "safari_version TEXT" +
+                    "others TEXT" +
                     ");");
         }
 
         /* Save into Cassandra from file */
-        CassandraJavaUtil.javaFunctions(sc.textFile(filename).map(x -> ParseFromLogLine.apacheAccessLogParse(x)),
-                ApacheAccessLog.class).saveToCassandra("access", "log");
+        CassandraJavaUtil.javaFunctions(sc.textFile(filename).map(x -> ParseFromLogLine.logParse(x)), Log.class)
+                .saveToCassandra("access", "log");
+
+        CassandraJavaUtil.javaFunctions(sc)
+                .cassandraTable("access", "log")
+                .map(x -> ParseFromCassandra.logParse(x.toString()).toJSON())
+                .foreach(x -> System.out.println(x.string()));
 
         /* Save into ElasticSearch from Cassandra */
-        saveJsonToEs(CassandraJavaUtil.javaFunctions(sc).cassandraTable("access", "log")
-                .map(x -> ParseFromCassandra.apacheAccessLogParse(x.toString()).toJSON().string()), "sparky/Batch");
+//        saveJsonToEs(CassandraJavaUtil.javaFunctions(sc).cassandraTable("access", "log")
+  //              .map(x -> ParseFromCassandra.logParse(x.toString()).toJSON().string()), "sparky/Batch");
 
         sc.stop();
     }

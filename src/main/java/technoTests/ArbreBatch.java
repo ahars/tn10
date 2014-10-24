@@ -18,5 +18,7 @@ public class ArbreBatch {
         String filename = PATH + "\\arbresalignementparis2010.csv";
 
         // TODO
+
+        sc.stop();
     }
 }

@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 public interface ParseFromCassandra {
 
-    static final Logger logger = Logger.getLogger("ParseFromLogLine");
+    static final Logger logger = Logger.getLogger("ParseFromCassandra");
 
     static final String CASSANDRA_APACHE_ACCESS_LOG_PATTERN =
             "^CassandraRow\\{" +
@@ -16,7 +16,7 @@ public interface ParseFromCassandra {
                     "(\\S+): (\\S+), " +    // 6:chrome_name
                     "(\\S+): (\\S+), " +    // 8:chrome_version
                     "(\\S+): (\\S+), " +    // 10:city
-                    "(\\S+): (\\S+), " +    // 12: client_id
+                    "(\\S+): (\\S+), " +    // 12:client_id
                     "(\\S+): (\\S+), " +    // 14:content_size
                     "(\\S+): (\\S+), " +    // 16:country_code
                     "(\\S+): (\\S+), " +    // 18:country_name
@@ -58,10 +58,10 @@ public interface ParseFromCassandra {
                     "(\\S+): (\\S+), " +    // 91:webkit_version
                     "(\\S+): (\\S+)" +      // 93:year
                     "\\}$";
-    static final Pattern PATTERN = Pattern.compile(CASSANDRA_APACHE_ACCESS_LOG_PATTERN);
+    static final Pattern PATTERN1 = Pattern.compile(CASSANDRA_APACHE_ACCESS_LOG_PATTERN);
 
     public static ApacheAccessLog apacheAccessLogParse(String cassandraRow) {
-        Matcher m = PATTERN.matcher(cassandraRow);
+        Matcher m = PATTERN1.matcher(cassandraRow);
         if (!m.find()) {
             logger.log(Level.ALL, "Cannot parse cassandraRow" + cassandraRow);
             throw new RuntimeException("Error parsing cassandraRow");
@@ -72,6 +72,57 @@ public interface ParseFromCassandra {
                 m.group(47), m.group(49), m.group(51), m.group(53), m.group(55), m.group(57), m.group(59), m.group(61),
                 m.group(63), m.group(65), m.group(67), m.group(69), m.group(71), m.group(73), m.group(75), m.group(77),
                 m.group(79), m.group(81), m.group(83), m.group(85), m.group(87), m.group(89), m.group(91), m.group(93));
+    }
+
+    static final String CASSANDRA_LOG_PATTERN =
+            "^CassandraRow\\{" +
+                    "(\\S+): (\\S+), " +    // 2:_id
+                    "(\\S+): (\\S+), " +    // 4:area_code
+                    "(\\S+): (\\S+), " +    // 6:city
+                    "(\\S+): (\\S+), " +    // 8:client_id
+                    "(\\S+): (\\S+), " +    // 10:content_size
+                    "(\\S+): (\\S+), " +    // 12:country_code
+                    "(\\S+): (\\S+), " +    // 14:country_name
+                    "(\\S+): (\\S+), " +    // 16:date
+                    "(\\S+): (\\d{2}\\/(\\S+)\\/\\d{4}:\\d{2}:\\d{2}:\\d{2}\\s[+\\-]\\d{4}), " +  //18:date_time_string
+                    "(\\S+): (\\S+), " +    // 21:day
+                    "(\\S+): (\\S+), " +    // 23:endpoint
+                    "(\\S+): (\\S+), " +    // 25:hours
+                    "(\\S+): (\\S+), " +    // 27:ip
+                    "(\\S+): (\\S+), " +    // 29:latitude
+                    "(\\S+): (\\S+), " +    // 31:lnglat
+                    "(\\S+): (\\S+), " +    // 33:longitude
+                    "(\\S+): (\\S+), " +    // 35:method
+                    "(\\S+): (\\S+), " +    // 37:metro_code
+                    "(\\S+): (\\S+), " +    // 39:minutes
+                    "(\\S+): (\\S+), " +    // 41:month
+                    "(\\S+): (.*), " +      // 43:others
+                    "(\\S+): (\\S+), " +    // 45:postal_code
+                    "(\\S+): (\\S+), " +    // 47:protocol_name
+                    "(\\S+): (\\S+), " +    // 49:protocol_version
+                    "(\\S+): (\\S+), " +    // 51:region_code
+                    "(\\S+): (\\S+), " +    // 53:region_name
+                    "(\\S+): (\\S+), " +    // 55:response_code
+                    "(\\S+): (\\S+), " +    // 57:seconds
+                    "(\\S+): (\\S+), " +    // 59:timestamp
+                    "(\\S+): (\\S+), " +    // 61:timezone
+                    "(\\S+): (\\S+), " +    // 63:timezone_offset
+                    "(\\S+): (\\S+), " +    // 65:user_id
+                    "(\\S+): (\\S+)" +      // 67:year
+                    "\\}$";
+    static final Pattern PATTERN2 = Pattern.compile(CASSANDRA_LOG_PATTERN);
+
+    public static Log logParse(String cassandraRow) {
+        Matcher m = PATTERN2.matcher(cassandraRow);
+        if (!m.find()) {
+            logger.log(Level.ALL, "Cannot parse cassandraRow" + cassandraRow);
+            throw new RuntimeException("Error parsing cassandraRow");
+        }
+        return new Log(m.group(2), m.group(4), m.group(6), m.group(8), m.group(10), m.group(12),
+                m.group(14), m.group(16), m.group(18), m.group(21), m.group(23), m.group(25), m.group(27), m.group(29),
+                m.group(31), m.group(33), m.group(35), m.group(37), m.group(39), m.group(41), m.group(43), m.group(45),
+                m.group(47), m.group(49), m.group(51), m.group(53), m.group(55), m.group(57), m.group(59), m.group(61),
+                m.group(63), m.group(65), m.group(67));
     }
 }
 
