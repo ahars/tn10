@@ -20,8 +20,10 @@ public class OthersLogBatchTest {
 
     public static void main(String[] args) {
 
-        final String PATH = "C:\\Users\\IPPON_2\\Desktop\\tn10\\sparky\\src\\data\\";
-        String filename = PATH + "\\sample.log";
+        //final String PATH = "C:\\Users\\IPPON_2\\Desktop\\tn10\\sparky\\src\\data\\";
+        //String filename = PATH + "\\sample.log";
+        final String PATH = "/Users/ahars/sparky/src/data/";
+        String filename = PATH + "/sample.log";
 
         SparkConf conf = new SparkConf()
                 .setAppName("OthersLogBatchTest")
@@ -33,12 +35,12 @@ public class OthersLogBatchTest {
         System.out.println(sc.getConf().toDebugString());
 
         /* Init ElasticSearch */
-        Node node = nodeBuilder().clusterName("elasticsearch").node();
-        Client client = node.client();
+//        Node node = nodeBuilder().clusterName("elasticsearch").node();
+  //      Client client = node.client();
 
         /* Init Cassandra */
-        CassandraConnector connector = CassandraConnector.apply(sc.getConf());
-        try (Session session = connector.openSession()) {
+//        CassandraConnector connector = CassandraConnector.apply(sc.getConf());
+/*        try (Session session = connector.openSession()) {
             session.execute("DROP KEYSPACE IF EXISTS access;");
             session.execute("CREATE KEYSPACE access " +
                     "WITH replication = {" +
@@ -47,32 +49,11 @@ public class OthersLogBatchTest {
                     "};");
             session.execute("CREATE TABLE IF NOT EXISTS access.log (" +
                     "id TIMEUUID PRIMARY KEY," +
-                    "ip_adress TEXT," +
-                    "country_code TEXT," +
-                    "country_name TEXT," +
-                    "region_code TEXT," +
-                    "region_name TEXT," +
-                    "city TEXT," +
-                    "postal_code TEXT," +
+                    "ip_adress MAP<TEXT, TEXT>," +
                     "lnglat LIST<FLOAT>," +
-                    "latitude FLOAT," +
-                    "longitude FLOAT," +
-                    "metro_code INT," +
-                    "area_code INT," +
-                    "timezone TEXT," +
                     "client_id TEXT," +
                     "user_id TEXT," +
                     "date_time MAP<TEXT, TEXT>," +
-                    "date_time_string TEXT," +
-                    "timestamp TEXT," +
-                    "day INT," +
-                    "date INT," +
-                    "month INT," +
-                    "year INT," +
-                    "hours INT," +
-                    "minutes INT," +
-                    "seconds INT," +
-                    "timezone_offset INT," +
                     "method TEXT," +
                     "endPoint TEXT," +
                     "protocol_name TEXT," +
@@ -82,20 +63,23 @@ public class OthersLogBatchTest {
                     "others TEXT" +
                     ");");
         }
-
+*/
         /* Save into Cassandra from file */
-        CassandraJavaUtil.javaFunctions(sc.textFile(filename).map(x -> ParseFromLogLine.logParse(x)), Log.class)
-                .saveToCassandra("access", "log");
+//        CassandraJavaUtil.javaFunctions(sc.textFile(filename).map(x -> ParseFromLogLine.logParse(x)), Log.class)
+  //              .saveToCassandra("access", "log");
 
+        System.out.println(sc.textFile(filename).map(x -> ParseFromLogLine.logParse(x).toString()).first());
+        System.out.println(sc.textFile(filename).map(x -> ParseFromLogLine.logParse(x).toJSON().string()).first());
+/*
         CassandraJavaUtil.javaFunctions(sc)
                 .cassandraTable("access", "log")
                 .map(x -> ParseFromCassandra.logParse(x.toString()).toJSON())
                 .foreach(x -> System.out.println(x.string()));
-
+*/
         /* Save into ElasticSearch from Cassandra */
 //        saveJsonToEs(CassandraJavaUtil.javaFunctions(sc).cassandraTable("access", "log")
   //              .map(x -> ParseFromCassandra.logParse(x.toString()).toJSON().string()), "sparky/Batch");
 
-        sc.stop();
+    //    sc.stop();
     }
 }

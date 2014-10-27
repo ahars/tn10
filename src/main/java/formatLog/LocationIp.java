@@ -10,8 +10,10 @@ import java.util.List;
 
 public class LocationIp {
 
-    private static final String PATH = "C:\\Users\\IPPON_2\\Desktop\\tn10\\sparky\\src\\data\\";
-    private File file = new File(PATH + "GeoLiteCity.dat");
+//    private static final String PATH = "C:\\Users\\IPPON_2\\Desktop\\tn10\\sparky\\src\\data\\";
+//    private File file = new File(PATH + "GeoLiteCity.dat");
+    private static final String PATH = "/Users/ahars/sparky/src/data/";
+    private File file = new File(PATH + "/GeoLiteCity.dat");
 
     private String ip = null;
     private String countryCode = null;
