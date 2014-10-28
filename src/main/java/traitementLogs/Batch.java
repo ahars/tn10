@@ -4,8 +4,10 @@ import com.datastax.driver.core.Session;
 import com.datastax.spark.connector.CassandraJavaUtil;
 import com.datastax.spark.connector.cql.CassandraConnector;
 import formatLog.ApacheAccessLog;
+import formatLog.Log;
 import formatLog.ParseFromCassandra;
 import formatLog.ParseFromLogLine;
+import org.apache.commons.lang.StringUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.elasticsearch.client.Client;
@@ -20,6 +22,8 @@ public class Batch {
 
         final String PATH = "C:\\Users\\IPPON_2\\Desktop\\tn10\\sparky\\src\\data\\";
         String filename = PATH + "\\sample.log";
+        //final String PATH = "/Users/ahars/sparky/src/data/";
+        //String filename = PATH + "/sample.log";
 
         SparkConf conf = new SparkConf()
                 .setAppName("SparkBatch")
@@ -31,8 +35,8 @@ public class Batch {
         System.out.println(sc.getConf().toDebugString());
 
         /* Init ElasticSearch */
-        Node node = nodeBuilder().clusterName("elasticsearch").node();
-        Client client = node.client();
+//        Node node = nodeBuilder().clusterName("elasticsearch").node();
+//        Client client = node.client();
 
         /* Init Cassandra */
         CassandraConnector connector = CassandraConnector.apply(sc.getConf());
@@ -45,62 +49,41 @@ public class Batch {
                     "};");
             session.execute("CREATE TABLE IF NOT EXISTS access.log (" +
                     "id TIMEUUID PRIMARY KEY," +
-                    "ip TEXT," +
-                    "country_code TEXT," +
-                    "country_name TEXT," +
-                    "region_code TEXT," +
-                    "region_name TEXT," +
-                    "city TEXT," +
-                    "postal_code TEXT," +
-                    "lnglat LIST<FLOAT>," +
-                    "latitude FLOAT," +
-                    "longitude FLOAT," +
-                    "metro_code INT," +
-                    "area_code INT," +
-                    "timezone TEXT," +
                     "client_id TEXT," +
-                    "user_id TEXT," +
-                    "date_time_string TEXT," +
-                    "timestamp TEXT," +
-                    "day INT," +
-                    "date INT," +
-                    "month INT," +
-                    "year INT," +
-                    "hours INT," +
-                    "minutes INT," +
-                    "seconds INT," +
-                    "timezone_offset INT," +
-                    "method TEXT," +
+                    "content_size INT," +
+                    "date_time MAP<TEXT, TEXT>," +
                     "endPoint TEXT," +
+                    "ip MAP<TEXT, TEXT>," +
+                    "lnglat LIST<FLOAT>," +
+                    "method TEXT," +
+                    "others TEXT," +
                     "protocol_name TEXT," +
                     "protocol_version TEXT," +
                     "response_code INT," +
-                    "content_size INT," +
-                    "link TEXT," +
-                    "mozilla_name TEXT," +
-                    "mozilla_version TEXT," +
-                    "os_type TEXT," +
-                    "os_name TEXT," +
-                    "os_version TEXT," +
-                    "webkit_type TEXT," +
-                    "webkit_version TEXT," +
-                    "rendu_html_name TEXT," +
-                    "rendu_html_type TEXT," +
-                    "chrome_name TEXT," +
-                    "chrome_version TEXT," +
-                    "safari_name TEXT," +
-                    "safari_version TEXT" +
+                    "user_id TEXT" +
                     ");");
         }
 
         /* Save into Cassandra from file */
-        CassandraJavaUtil.javaFunctions(sc.textFile(filename).map(x -> ParseFromLogLine.apacheAccessLogParse(x)),
-                ApacheAccessLog.class).saveToCassandra("access", "log");
+        CassandraJavaUtil.javaFunctions(sc.textFile(filename).map(x -> ParseFromLogLine.logParse(x)), Log.class)
+                .saveToCassandra("access", "log");
 
-        /* Save into ElasticSearch from Cassandra */
+        System.out.println("SPARK = " + sc.textFile(filename).map(x -> ParseFromLogLine.logParse(x)).first());
+        System.out.println(CassandraJavaUtil.javaFunctions(sc).cassandraTable("access", "log").first().toString());
+
+        System.out.println("Data as CassandraRows: \n" +
+                StringUtils.join(CassandraJavaUtil.javaFunctions(sc)
+                        .cassandraTable("access", "log")
+                        .map(x -> x.toString())
+                        .toArray(), "\n"));
+
+        System.out.println(CassandraJavaUtil.javaFunctions(sc).cassandraTable("access", "log")
+                .map(x -> ParseFromCassandra.logParse(x.toString()).toJSON().string()));
+
+        /* Save into ElasticSearch from Cassandra
         saveJsonToEs(CassandraJavaUtil.javaFunctions(sc).cassandraTable("access", "log")
                 .map(x -> ParseFromCassandra.apacheAccessLogParse(x.toString()).toJSON().string()), "sparky/Batch");
-
+        */
         sc.stop();
     }
 }

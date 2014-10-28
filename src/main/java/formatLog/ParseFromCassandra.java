@@ -77,38 +77,18 @@ public interface ParseFromCassandra {
     static final String CASSANDRA_LOG_PATTERN =
             "^CassandraRow\\{" +
                     "(\\S+): (\\S+), " +    // 2:_id
-                    "(\\S+): (\\S+), " +    // 4:area_code
-                    "(\\S+): (\\S+), " +    // 6:city
-                    "(\\S+): (\\S+), " +    // 8:client_id
-                    "(\\S+): (\\S+), " +    // 10:content_size
-                    "(\\S+): (\\S+), " +    // 12:country_code
-                    "(\\S+): (\\S+), " +    // 14:country_name
-                    "(\\S+): (\\S+), " +    // 16:date
-                    "(\\S+): (\\d{2}\\/(\\S+)\\/\\d{4}:\\d{2}:\\d{2}:\\d{2}\\s[+\\-]\\d{4}), " +  //18:date_time_string
-                    "(\\S+): (\\S+), " +    // 21:day
-                    "(\\S+): (\\S+), " +    // 23:endpoint
-                    "(\\S+): (\\S+), " +    // 25:hours
-                    "(\\S+): (\\S+), " +    // 27:ip
-                    "(\\S+): (\\S+), " +    // 29:latitude
-                    "(\\S+): (\\S+), " +    // 31:lnglat
-                    "(\\S+): (\\S+), " +    // 33:longitude
-                    "(\\S+): (\\S+), " +    // 35:method
-                    "(\\S+): (\\S+), " +    // 37:metro_code
-                    "(\\S+): (\\S+), " +    // 39:minutes
-                    "(\\S+): (\\S+), " +    // 41:month
-                    "(\\S+): (.*), " +      // 43:others
-                    "(\\S+): (\\S+), " +    // 45:postal_code
-                    "(\\S+): (\\S+), " +    // 47:protocol_name
-                    "(\\S+): (\\S+), " +    // 49:protocol_version
-                    "(\\S+): (\\S+), " +    // 51:region_code
-                    "(\\S+): (\\S+), " +    // 53:region_name
-                    "(\\S+): (\\S+), " +    // 55:response_code
-                    "(\\S+): (\\S+), " +    // 57:seconds
-                    "(\\S+): (\\S+), " +    // 59:timestamp
-                    "(\\S+): (\\S+), " +    // 61:timezone
-                    "(\\S+): (\\S+), " +    // 63:timezone_offset
-                    "(\\S+): (\\S+), " +    // 65:user_id
-                    "(\\S+): (\\S+)" +      // 67:year
+                    "(\\S+): (\\S+), " +    // 4:client_id
+                    "(\\S+): (\\S+), " +    // 6:content_size
+                    "(\\S+): \\{(.*)\\}, " +    // 8:date_time
+                    "(\\S+): (\\S+), " +    // 10:endpoint
+                    "(\\S+): \\{(.*)\\}, " +    // 12:ip
+                    "(\\S+): \\[(.*)\\], " +    // 14:lnglat
+                    "(\\S+): (\\S+), " +    // 16:method
+                    "(\\S+): (.*), " +      // 18:others
+                    "(\\S+): (\\S+), " +    // 20:protocol_name
+                    "(\\S+): (\\S+), " +    // 22:protocol_version
+                    "(\\S+): (\\S+), " +    // 24:response_code
+                    "(\\S+): (\\S+) " +    // 26:user_id
                     "\\}$";
     static final Pattern PATTERN2 = Pattern.compile(CASSANDRA_LOG_PATTERN);
 
@@ -119,10 +99,7 @@ public interface ParseFromCassandra {
             throw new RuntimeException("Error parsing cassandraRow");
         }
         return new Log(m.group(2), m.group(4), m.group(6), m.group(8), m.group(10), m.group(12),
-                m.group(14), m.group(16), m.group(18), m.group(21), m.group(23), m.group(25), m.group(27), m.group(29),
-                m.group(31), m.group(33), m.group(35), m.group(37), m.group(39), m.group(41), m.group(43), m.group(45),
-                m.group(47), m.group(49), m.group(51), m.group(53), m.group(55), m.group(57), m.group(59), m.group(61),
-                m.group(63), m.group(65), m.group(67));
+                m.group(14), m.group(16), m.group(18), m.group(20), m.group(22), m.group(24), m.group(26));
     }
 }
 

@@ -66,6 +66,8 @@ public class ApacheAccessLog implements Serializable {
     private String safari_name = null;
     private String safari_version = null;
 
+    public ApacheAccessLog() {}
+
     public ApacheAccessLog(String ip, String client_id, String user_id, String date_string,
                    String method, String endpoint, String protocol, String response_code,
                    String content_size, String link, String mozilla, String os,

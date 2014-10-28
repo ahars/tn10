@@ -33,6 +33,45 @@ public class Log implements Serializable {
     private Integer content_size = null;
     private String others = null;
 
+    public Log(String id, String client_id, String content_size, String date_time, String endpoint, String ip,
+               String lnglat, String method, String others, String protocol_name, String protocol_version,
+               String response_code, String user_id) {
+
+        this.id = UUID.fromString(id);
+        this.ip = getIpFromString(ip);
+        this.lnglat = getLnglatFromString(lnglat);
+        this.client_id = client_id;
+        this.user_id = user_id;
+        this.date_time = getDateFromString(date_time);
+        this.method = method;
+        this.endpoint = endpoint;
+        this.protocol_name = protocol_name;
+        this.protocol_version = protocol_version;
+        this.response_code = Integer.parseInt(response_code);
+        this.content_size = Integer.parseInt(content_size);
+        this.others = others;
+    }
+
+    public Log(UUID id, String client_id, Integer content_size, HashMap<String, String> date_time, String endpoint,
+               HashMap<String, String> ip, List<Float> lnglat, String method, String others, String protocol_name,
+               String protocol_version, Integer response_code, String user_id) {
+
+        this.id = id;
+        this.client_id = client_id;
+        this.content_size = content_size;
+        this.date_time.putAll(date_time);
+        this.endpoint = endpoint;
+        this.ip.putAll(ip);
+        this.lnglat.addAll(lnglat);
+        this.method = method;
+        this.others = others;
+        this.protocol_name = protocol_name;
+        this.protocol_version = protocol_version;
+        this.response_code = response_code;
+        this.user_id = user_id;
+
+    }
+
     public Log(String ip_adress, String client_id, String user_id, String date_string, String method, String endpoint,
                String protocol, String response_code, String content_size, String others) {
 
@@ -41,6 +80,7 @@ public class Log implements Serializable {
         this.id = UUIDGen.getTimeUUID();
         this.ip = location.getIp_adress();
         this.lnglat = location.getLnglat();
+
         this.client_id = client_id;
         this.user_id = user_id;
 
@@ -82,55 +122,6 @@ public class Log implements Serializable {
         this.response_code = log.getResponse_code();
         this.content_size =  log.getContent_size();
         this.others = log.getOthers();
-    }
-
-    public Log(String id, String area_code, String city, String client_id, String content_size, String country_code,
-               String country_name, String date, String date_time, String day, String endpoint, String hours,
-               String ip_adress, String latitude, String lnglat, String longitude, String method, String metro_code,
-               String minutes, String month, String others, String postal_code, String protocol_name,
-               String protocol_version, String region_code, String region_name, String response_code, String seconds,
-               String timestamp, String timezone, String timezone_offset, String user_id, String year) {
-
-        this.id = UUID.fromString(id);
-
-        this.ip = new HashMap<>();
-        this.ip.put("ip_adress", ip_adress);
-        this.ip.put("country_code", country_code);
-        this.ip.put("country_name", country_name);
-        this.ip.put("region_code", region_code);
-        this.ip.put("region_name", region_name);
-        this.ip.put("city", city);
-        this.ip.put("postal_code", postal_code);
-        this.ip.put("metro_code", metro_code);
-        this.ip.put("area_code", area_code);
-        this.ip.put("timezone", timezone);
-
-        this.lnglat = new ArrayList<>();
-        this.lnglat.add(Float.parseFloat(longitude));
-        this.lnglat.add(Float.parseFloat(latitude));
-
-        this.client_id = client_id;
-        this.user_id = user_id;
-
-        this.date_time = new HashMap<>();
-        this.date_time.put("date_time", date_time);
-        this.date_time.put("timestamp", timestamp);
-        this.date_time.put("day", day);
-        this.date_time.put("date", date);
-        this.date_time.put("month", month);
-        this.date_time.put("year", year);
-        this.date_time.put("hours", hours);
-        this.date_time.put("minutes", minutes);
-        this.date_time.put("seconds", seconds);
-        this.date_time.put("timezone_offset", timezone_offset);
-
-        this.method = method;
-        this.endpoint = endpoint;
-        this.protocol_name = protocol_name;
-        this.protocol_version = protocol_version;
-        this.response_code = Integer.parseInt(response_code);
-        this.content_size = Integer.parseInt(content_size);
-        this.others = others;
     }
 
     public UUID getId() { return id; }
@@ -200,9 +191,9 @@ public class Log implements Serializable {
     }
 
     public String toString() {
-        return String.format("id = %d, ip = {%s}, lnglat = %s, client_id = %s, user_id = %s, date_time = %s, " +
+        return String.format("id = %d, ip = %s, lnglat = %s, client_id = %s, user_id = %s, date_time = %s, " +
                         "method = %s, endpoint = %s, protocol_name = %s, " + "protocol_version = %s, " +
-                        "response_code = %s, content_size = %s, others = {%s}",
+                        "response_code = %s, content_size = %s, others = %s",
                 id.hashCode(), ip, lnglat, client_id, user_id, date_time, method, endpoint, protocol_name,
                 protocol_version, response_code, content_size, others);
     }
@@ -243,4 +234,117 @@ public class Log implements Serializable {
                 .field("others", others)
                 .endObject();
     }
+
+    private HashMap<String, String> getIpFromString(String ip) {
+
+// {city: Paris,
+// region_name: Ile-de-France,
+// ip_adress: 88.162.200.57,
+// timezone: Europe/Paris,
+// metro_code: 0,
+// area_code: 0,
+// country_code: FR,
+// postal_code: 75010,
+// region_code: A8,
+// country_name: France}
+
+        Pattern ip_pattern = Pattern.compile("^(\\S+): (\\S+)," +   // 1-2
+                "(\\S+): (\\S+)," +     // 3-4
+                "(\\S+): (\\S+)," +     // 5-6
+                "(\\S+): (\\S+)," +     // 7-8
+                "(\\S+): (\\S+)," +     // 9-10
+                "(\\S+): (\\S+)," +     // 11-12
+                "(\\S+): (\\S+)," +     // 13-14
+                "(\\S+): (\\S+)," +     // 15-16
+                "(\\S+): (\\S+)," +     // 17-18
+                "(\\S+): (\\S+)" +      // 19-20
+                "\\}");
+        Matcher mip = ip_pattern.matcher(ip);
+
+        HashMap<String, String> result = new HashMap<>();
+
+        if (!mip.find()) {
+            logger.log(Level.ALL, "Cannot parse ip" + ip + " from cassandra");
+            throw new RuntimeException("Error parsing ip from cassandra");
+        }
+
+        result.put(mip.group(1), mip.group(2));
+        result.put(mip.group(3), mip.group(4));
+        result.put(mip.group(5), mip.group(6));
+        result.put(mip.group(7), mip.group(8));
+        result.put(mip.group(9), mip.group(10));
+        result.put(mip.group(11), mip.group(12));
+        result.put(mip.group(13), mip.group(14));
+        result.put(mip.group(15), mip.group(16));
+        result.put(mip.group(17), mip.group(18));
+        result.put(mip.group(19), mip.group(20));
+
+        return result;
+    }
+
+    private HashMap<String, String> getDateFromString(String date) {
+
+// {timezone_offset: -120,
+// timestamp: 1410409737000,
+// seconds: 57,
+// year: 2014,
+// minutes: 28,
+// hours: 6,
+// date: 11,
+// date_time: 11/Sep/2014:06:28:57 +0200,
+// day: 4,
+// month: 9}
+
+        Pattern date_pattern = Pattern.compile("^(\\S+): (\\S+)," +   // 1-2
+                "(\\S+): (\\S+)," +     // 3-4
+                "(\\S+): (\\S+)," +     // 5-6
+                "(\\S+): (\\S+)," +     // 7-8
+                "(\\S+): (\\S+)," +     // 9-10
+                "(\\S+): (\\S+)," +     // 11-12
+                "(\\S+): (\\S+)," +     // 13-14
+                "(\\S+): (\\S+)," +     // 15-16
+                "(\\S+): (\\S+)," +     // 17-18
+                "(\\S+): (\\S+)" +      // 19-20
+                "\\}");
+        Matcher mdate = date_pattern.matcher(date);
+
+        HashMap<String, String> result = new HashMap<>();
+
+        if (!mdate.find()) {
+            logger.log(Level.ALL, "Cannot parse date" + date + " from cassandra");
+            throw new RuntimeException("Error parsing date from cassandra");
+        }
+
+        result.put(mdate.group(1), mdate.group(2));
+        result.put(mdate.group(3), mdate.group(4));
+        result.put(mdate.group(5), mdate.group(6));
+        result.put(mdate.group(7), mdate.group(8));
+        result.put(mdate.group(9), mdate.group(10));
+        result.put(mdate.group(11), mdate.group(12));
+        result.put(mdate.group(13), mdate.group(14));
+        result.put(mdate.group(15), mdate.group(16));
+        result.put(mdate.group(17), mdate.group(18));
+        result.put(mdate.group(19), mdate.group(20));
+
+        return result;
+    }
+
+    private List<Float> getLnglatFromString(String lnglat) {
+
+        Pattern lnglat_pattern = Pattern.compile("^(\\S+),(\\S+)$");
+        Matcher mlnglat = lnglat_pattern.matcher(lnglat);
+
+        List<Float  > result = new LinkedList<>();
+
+        if (!mlnglat.find()) {
+            logger.log(Level.ALL, "Cannot parse lnglat" + lnglat + " from cassandra");
+            throw new RuntimeException("Error parsing lnglat from cassandra");
+        }
+
+        this.lnglat.add(Float.parseFloat(mlnglat.group(1)));
+        this.lnglat.add(Float.parseFloat(mlnglat.group(2)));
+
+        return result;
+    }
+
 }

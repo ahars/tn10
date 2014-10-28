@@ -3,6 +3,8 @@ package technoTests;
 import com.datastax.driver.core.Session;
 import com.datastax.spark.connector.CassandraJavaUtil;
 import com.datastax.spark.connector.cql.CassandraConnector;
+import com.datastax.spark.connector.rdd.CassandraJavaRDD;
+import formatLog.Log;
 import org.apache.commons.lang.StringUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
@@ -84,6 +86,9 @@ public class SparkCassandraTest {
                         .cassandraTable("test", "people")
                         .map(x -> x.toString())
                         .toArray(), "\n"));
+
+        CassandraJavaRDD<Person> rdd2 = CassandraJavaUtil.javaFunctions(sc).cassandraTable("test", "people", Person.class);
+        System.out.println(rdd2.first().getName() + " " + rdd2.first().getId() + " " + rdd2.first().getBirthDate());
 
         sc.stop();
     }
