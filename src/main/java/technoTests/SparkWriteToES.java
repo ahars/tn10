@@ -12,7 +12,8 @@ public class SparkWriteToES {
     public static void main(String[] args) {
 
         final String PATH = "C:\\Users\\IPPON_2\\Desktop\\tn10\\sparky\\src\\data\\";
-        String filename = PATH + "\\sample.log";
+        //final String PATH = "/Users/ahars/sparky/src/data/";
+        String filename = PATH + "sample.log";
 
         SparkConf conf = new SparkConf()
                 .setAppName("SparkToES")
@@ -23,7 +24,7 @@ public class SparkWriteToES {
         System.out.println(sc.getConf().toDebugString());
 
         JavaRDD<String> javaRDD = sc.textFile(filename)
-                .map(x -> ParseFromLogLine.apacheAccessLogParse(x).toJSON().string())
+                .map(x -> ParseFromLogLine.logParse(x).toJSON().string())
                 .cache();
         saveJsonToEs(javaRDD, "sparky/WriteToES");
 

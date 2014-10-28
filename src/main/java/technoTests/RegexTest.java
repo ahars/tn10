@@ -16,12 +16,12 @@ public class RegexTest implements ParseFromLogLine {
                 .setMaster("local");
         JavaSparkContext sc = new JavaSparkContext(conf);
         System.out.println(sc.getConf().toDebugString());
-
+/*
         String _1 = sc.textFile(filename).first();
         if (_1.matches(APACHE_ACCESS_LOG_PATTERN)) {
             System.out.println(ParseFromLogLine.apacheAccessLogParse(_1).toString());
         } else {
             System.out.println("logFormat non reconnu");
         }
-    }
+  */  }
 }

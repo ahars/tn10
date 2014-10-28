@@ -3,11 +3,8 @@ package traitementLogs;
 import com.datastax.driver.core.Session;
 import com.datastax.spark.connector.CassandraJavaUtil;
 import com.datastax.spark.connector.cql.CassandraConnector;
-import formatLog.ApacheAccessLog;
 import formatLog.Log;
-import formatLog.ParseFromCassandra;
 import formatLog.ParseFromLogLine;
-import org.apache.commons.lang.StringUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.elasticsearch.client.Client;
@@ -21,9 +18,8 @@ public class Batch {
     public static void main(String[] args) {
 
         final String PATH = "C:\\Users\\IPPON_2\\Desktop\\tn10\\sparky\\src\\data\\";
-        String filename = PATH + "\\sample.log";
         //final String PATH = "/Users/ahars/sparky/src/data/";
-        //String filename = PATH + "/sample.log";
+        String filename = PATH + "sample.log";
 
         SparkConf conf = new SparkConf()
                 .setAppName("SparkBatch")
@@ -35,8 +31,8 @@ public class Batch {
         System.out.println(sc.getConf().toDebugString());
 
         /* Init ElasticSearch */
-//        Node node = nodeBuilder().clusterName("elasticsearch").node();
-//        Client client = node.client();
+        Node node = nodeBuilder().clusterName("elasticsearch").node();
+        Client client = node.client();
 
         /* Init Cassandra */
         CassandraConnector connector = CassandraConnector.apply(sc.getConf());
@@ -68,22 +64,10 @@ public class Batch {
         CassandraJavaUtil.javaFunctions(sc.textFile(filename).map(x -> ParseFromLogLine.logParse(x)), Log.class)
                 .saveToCassandra("access", "log");
 
-        System.out.println("SPARK = " + sc.textFile(filename).map(x -> ParseFromLogLine.logParse(x)).first());
-        System.out.println(CassandraJavaUtil.javaFunctions(sc).cassandraTable("access", "log").first().toString());
-
-        System.out.println("Data as CassandraRows: \n" +
-                StringUtils.join(CassandraJavaUtil.javaFunctions(sc)
-                        .cassandraTable("access", "log")
-                        .map(x -> x.toString())
-                        .toArray(), "\n"));
-
-        System.out.println(CassandraJavaUtil.javaFunctions(sc).cassandraTable("access", "log")
-                .map(x -> ParseFromCassandra.logParse(x.toString()).toJSON().string()));
-
-        /* Save into ElasticSearch from Cassandra
+        /* Save into ElasticSearch from Cassandra */
         saveJsonToEs(CassandraJavaUtil.javaFunctions(sc).cassandraTable("access", "log")
-                .map(x -> ParseFromCassandra.apacheAccessLogParse(x.toString()).toJSON().string()), "sparky/Batch");
-        */
+                .map(x -> new Log(x).toJSON().string()), "sparky/Batch");
+
         sc.stop();
     }
 }

@@ -38,18 +38,3 @@ public class OthersProcess {
         }
     }
 }
-
-
-//others = {"http://manager.skytill.fr/index.php" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.94 Safari/537.36"}
-
-/*
-"http://manager.skytill.fr/index.php"
-"
-    Mozilla/5.0
-    (Macintosh; Intel Mac OS X 10_9_3)
-    AppleWebKit/537.36
-    (KHTML, like Gecko)
-    Chrome/37.0.2062.94
-    Safari/537.36
-"
-*/

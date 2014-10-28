@@ -3,15 +3,13 @@ package technoTests;
 import com.datastax.driver.core.Session;
 import com.datastax.spark.connector.CassandraJavaUtil;
 import com.datastax.spark.connector.cql.CassandraConnector;
-import formatLog.ApacheAccessLog;
-import formatLog.ParseFromCassandra;
+import formatLog.Log;
 import formatLog.ParseFromLogLine;
 import org.apache.commons.lang.StringUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.elasticsearch.common.xcontent.XContentBuilder;
-
 import java.util.List;
 
 public class SparkCassandraConnector {
@@ -19,7 +17,8 @@ public class SparkCassandraConnector {
     public static void main(String[] args) {
 
         final String PATH = "C:\\Users\\IPPON_2\\Desktop\\tn10\\sparky\\src\\data\\";
-        String filename = PATH + "\\sample.log";
+        //final String PATH = "/Users/ahars/sparky/src/data/";
+        String filename = PATH + "sample.log";
 
         SparkConf conf = new SparkConf()
                 .setAppName("SparkToCassandra")
@@ -87,15 +86,15 @@ public class SparkCassandraConnector {
                     ");");
         }
 
-        List<ApacheAccessLog> list = sc.textFile(filename)
-                .map(x -> ParseFromLogLine.apacheAccessLogParse(x))
+        List<Log> list = sc.textFile(filename)
+                .map(x -> ParseFromLogLine.logParse(x))
                 .collect();
-        JavaRDD<ApacheAccessLog> rdd = sc.parallelize(list);
+        JavaRDD<Log> rdd = sc.parallelize(list);
 
         System.out.println(list.toString());
         System.out.println(rdd.first().toString());
 
-        CassandraJavaUtil.javaFunctions(rdd, ApacheAccessLog.class)
+        CassandraJavaUtil.javaFunctions(rdd, Log.class)
                 .saveToCassandra("access", "log");
 
         JavaRDD<String> cassandraRowsRDD = CassandraJavaUtil.javaFunctions(sc)
@@ -105,7 +104,7 @@ public class SparkCassandraConnector {
 
         JavaRDD<XContentBuilder> cassandraLogRDD = CassandraJavaUtil.javaFunctions(sc)
                 .cassandraTable("access", "log")
-                .map(x -> ParseFromCassandra.apacheAccessLogParse(x.toString()).toJSON());
+                .map(x -> new Log(x).toJSON());
 
         cassandraLogRDD.foreach(x -> System.out.println(x.string()));
 

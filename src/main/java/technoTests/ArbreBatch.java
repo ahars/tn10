@@ -8,6 +8,7 @@ public class ArbreBatch {
     public static void main(String[] args) {
 
         final String PATH = "C:\\Users\\IPPON_2\\tn10\\sparky\\src\\data\\";
+        //final String PATH = "/Users/ahars/sparky/src/data/";
 
         SparkConf conf = new SparkConf()
                 .setAppName("SparkArbreBatch")
@@ -15,7 +16,7 @@ public class ArbreBatch {
         JavaSparkContext sc = new JavaSparkContext(conf);
         System.out.println(sc.getConf().toDebugString());
 
-        String filename = PATH + "\\arbresalignementparis2010.csv";
+        String filename = PATH + "arbresalignementparis2010.csv";
 
         // TODO
 
