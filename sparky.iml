@@ -182,7 +182,7 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: junit:junit:4.8.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: cascading:cascading-hadoop:2.5.5" level="project" />
     <orderEntry type="library" name="Maven: org.elasticsearch:elasticsearch-spark_2.10:2.1.0.Beta1" level="project" />
-    <orderEntry type="library" name="Maven: com.datastax.spark:spark-cassandra-connector_2.10:1.0.2" level="project" />
+    <orderEntry type="library" name="Maven: com.datastax.spark:spark-cassandra-connector_2.10:1.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.cassandra:cassandra-thrift:2.0.9" level="project" />
     <orderEntry type="library" name="Maven: org.apache.cassandra:cassandra-clientutil:2.0.9" level="project" />
     <orderEntry type="library" name="Maven: com.datastax.cassandra:cassandra-driver-core:sources:2.0.6" level="project" />
@@ -190,6 +190,7 @@
     <orderEntry type="library" name="Maven: org.joda:joda-convert:1.2" level="project" />
     <orderEntry type="library" name="Maven: com.datastax.spark:spark-cassandra-connector-java_2.10:1.0.3" level="project" />
     <orderEntry type="library" name="Maven: net.jpountz.lz4:lz4:1.2.0" level="project" />
+    <orderEntry type="library" name="Maven: org.threeten:threetenbp:1.1" level="project" />
   </component>
 </module>
 

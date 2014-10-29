@@ -33,11 +33,11 @@ public class OthersLogBatchTest {
         System.out.println(sc.getConf().toDebugString());
 
         /* Init ElasticSearch */
-        Node node = nodeBuilder().clusterName("elasticsearch").node();
-        Client client = node.client();
+//        Node node = nodeBuilder().clusterName("elasticsearch").node();
+  //      Client client = node.client();
 
         /* Init Cassandra */
-        CassandraConnector connector = CassandraConnector.apply(sc.getConf());
+/*        CassandraConnector connector = CassandraConnector.apply(sc.getConf());
         try (Session session = connector.openSession()) {
             session.execute("DROP KEYSPACE IF EXISTS access;");
             session.execute("CREATE KEYSPACE access " +
@@ -61,7 +61,7 @@ public class OthersLogBatchTest {
                     "user_id TEXT" +
                     ");");
         }
-
+*/
         /* Save into Cassandra from file */
 /*        CassandraJavaUtil.javaFunctions(sc.textFile(filename).map(x -> ParseFromLogLine.logParse(x)), Log.class)
                 .saveToCassandra("access", "log");

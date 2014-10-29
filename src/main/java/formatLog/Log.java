@@ -5,10 +5,12 @@ import com.datastax.spark.connector.types.TypeConverter;
 import org.apache.cassandra.utils.UUIDGen;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import scala.collection.JavaConversions;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,17 +49,7 @@ public class Log implements Serializable {
         this.client_id = client_id;
         this.user_id = user_id;
 
-        this.date_time = new HashMap<>();
-        this.date_time.put("date_time", getDate_timeToString(date_string)[0]);
-        this.date_time.put("timestamp", getDate_timeToString(date_string)[1]);
-        this.date_time.put("day", getDate_timeToString(date_string)[2]);
-        this.date_time.put("date", getDate_timeToString(date_string)[3]);
-        this.date_time.put("month", getDate_timeToString(date_string)[4]);
-        this.date_time.put("year", getDate_timeToString(date_string)[5]);
-        this.date_time.put("hours", getDate_timeToString(date_string)[6]);
-        this.date_time.put("minutes", getDate_timeToString(date_string)[7]);
-        this.date_time.put("seconds", getDate_timeToString(date_string)[8]);
-        this.date_time.put("timezone_offset", getDate_timeToString(date_string)[9]);
+        getOldDate_timeToString(date_string);
 
         this.method = method;
         this.endpoint = endpoint;
@@ -66,8 +58,6 @@ public class Log implements Serializable {
         this.response_code = Integer.parseInt(response_code);
         this.content_size =  Integer.parseInt(content_size);
         this.others = others;
-
-        conversionNullToString();
     }
 
     public Log(CassandraRow crow) {
@@ -89,8 +79,6 @@ public class Log implements Serializable {
         this.response_code = crow.getInt("response_code");
         this.content_size =  crow.getInt("content_size");
         this.others = crow.getString("others");
-
-        conversionNullToString();
     }
 
     public UUID getId() { return id; }
@@ -132,7 +120,44 @@ public class Log implements Serializable {
     public String getOthers() { return others; }
     public void setOthers(String others) { this.others = others; }
 
-    private void conversionNullToString () {
+    private String[] getNewDate_timeToString(String date_string) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MMM/yyyy:HH:mm:ss ZZZ", Locale.US);
+        Date date = null;
+
+        try {
+            date = formatter.parse(date_string);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return new String[]{date_string, String.valueOf(date.getTime()), String.valueOf(date.getDay()),
+                String.valueOf(date.getDate()), String.valueOf(date.getMonth() + 1),
+                String.valueOf(date.getYear() + 1900), String.valueOf(date.getHours()),
+                String.valueOf(date.getMinutes()), String.valueOf(date.getSeconds()),
+                String.valueOf(date.getTimezoneOffset())};
+    }
+
+    private void getOldDate_timeToString(String date_string) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MMM/yyyy:HH:mm:ss ZZZ", Locale.US);
+        Date date = null;
+
+        try {
+            date = formatter.parse(date_string);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        this.date_time = new HashMap<>();
+        this.date_time.put("date_time", date_string);
+        this.date_time.put("timestamp", String.valueOf(date.getTime()));
+        this.date_time.put("day", String.valueOf(date.getDay()));
+        this.date_time.put("date", String.valueOf(date.getDate()));
+        this.date_time.put("month", String.valueOf(date.getMonth() + 1));
+        this.date_time.put("year", String.valueOf(date.getYear() + 1900));
+        this.date_time.put("hours", String.valueOf(date.getHours()));
+        this.date_time.put("minutes", String.valueOf(date.getMinutes()));
+        this.date_time.put("seconds", String.valueOf(date.getSeconds()));
+        this.date_time.put("timezone_offset", String.valueOf(date.getTimezoneOffset()));
+
         this.date_time.replace("date_time", null, "");
         this.date_time.replace("timestamp", null, "");
         this.date_time.replace("day", null, "");
@@ -143,22 +168,6 @@ public class Log implements Serializable {
         this.date_time.replace("minutes", null, "");
         this.date_time.replace("seconds", null, "");
         this.date_time.replace("timezone_offset", null, "");
-    }
-
-    private String[] getDate_timeToString(String dateString) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MMM/yyyy:HH:mm:ss ZZZ", Locale.US);
-        Date date = null;
-
-        try {
-            date = formatter.parse(dateString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return new String[]{dateString, String.valueOf(date.getTime()), String.valueOf(date.getDay()),
-                String.valueOf(date.getDate()), String.valueOf(date.getMonth() + 1),
-                String.valueOf(date.getYear() + 1900), String.valueOf(date.getHours()),
-                String.valueOf(date.getMinutes()), String.valueOf(date.getSeconds()),
-                String.valueOf(date.getTimezoneOffset())};
     }
 
     private String[] getProtocolToString(String protocol) {

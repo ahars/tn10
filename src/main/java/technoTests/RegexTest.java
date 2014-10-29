@@ -4,6 +4,10 @@ import formatLog.ParseFromLogLine;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class RegexTest implements ParseFromLogLine {
 
     public static void main(String[] args) {
@@ -23,5 +27,11 @@ public class RegexTest implements ParseFromLogLine {
         } else {
             System.out.println("logFormat non reconnu");
         }
-  */  }
+
+
+  */
+        String date_string = "11/Sep/2014:06:26:25 +0200";
+
+        System.out.println(Instant.now());
+    }
 }

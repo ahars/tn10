@@ -23,42 +23,31 @@ public class LocationIp {
 
         this.ip_adress = new HashMap<>();
         this.ip_adress.put("ip_adress", ip_adress);
+        Location l = null;
 
         try {
             LookupService cl = new LookupService(file, LookupService.GEOIP_MEMORY_CACHE );
-            Location l = cl.getLocation(ip_adress);
-
-            this.ip_adress.put("country_code", l.countryCode);
-            this.ip_adress.put("country_name", l.countryName);
-            this.ip_adress.put("region_code", l.region);
-            this.ip_adress.put("region_name", com.maxmind.geoip.regionName.regionNameByCode(l.countryCode, l.region));
-            this.ip_adress.put("city", l.city);
-            this.ip_adress.put("postal_code", l.postalCode);
-            this.ip_adress.put("metro_code", Integer.toString(l.metro_code));
-            this.ip_adress.put("area_code", Integer.toString(l.area_code));
-            this.ip_adress.put("timezone", timeZone.timeZoneByCountryAndRegion(l.countryCode, l.region));
-
-            this.lnglat = new LinkedList<Float>();
-            this.lnglat.add(l.longitude);
-            this.lnglat.add(l.latitude);
-
+            l = cl.getLocation(ip_adress);
             cl.close();
-            conversionNullToString();
         }
         catch (IOException e) {
             System.out.println("error LocationIp");
         }
-    }
 
-    public HashMap getIp_adress() { return ip_adress; }
-    public void setIp_adress(HashMap<String, String> ip_adress) {
-        this.ip_adress = ip_adress;
-    }
+        this.ip_adress.put("country_code", l.countryCode);
+        this.ip_adress.put("country_name", l.countryName);
+        this.ip_adress.put("region_code", l.region);
+        this.ip_adress.put("region_name", com.maxmind.geoip.regionName.regionNameByCode(l.countryCode, l.region));
+        this.ip_adress.put("city", l.city);
+        this.ip_adress.put("postal_code", l.postalCode);
+        this.ip_adress.put("metro_code", Integer.toString(l.metro_code));
+        this.ip_adress.put("area_code", Integer.toString(l.area_code));
+        this.ip_adress.put("timezone", timeZone.timeZoneByCountryAndRegion(l.countryCode, l.region));
 
-    public List<Float> getLnglat() { return lnglat; }
-    public void setLngLat(List<Float> lnglat) { this.lnglat = lnglat; }
+        this.lnglat = new LinkedList<Float>();
+        this.lnglat.add(l.longitude);
+        this.lnglat.add(l.latitude);
 
-    private void conversionNullToString () {
         this.ip_adress.replace("ip_adress", null, "");
         this.ip_adress.replace("country_code", null, "");
         this.ip_adress.replace("country_name", null, "");
@@ -70,4 +59,13 @@ public class LocationIp {
         this.ip_adress.replace("area_code", null, "");
         this.ip_adress.replace("timezone", null, "");
     }
+
+    public HashMap getIp_adress() { return ip_adress; }
+    public void setIp_adress(HashMap<String, String> ip_adress) {
+        this.ip_adress = ip_adress;
+    }
+
+    public List<Float> getLnglat() { return lnglat; }
+    public void setLngLat(List<Float> lnglat) { this.lnglat = lnglat; }
+
 }
