@@ -22,18 +22,18 @@ public class Log implements Serializable {
     private static final Logger logger = Logger.getLogger("Log");
 
     private UUID id = null;
+    private String client_id = "";
+    private Integer content_size = 0;
+    private Map<String, String> date_time = null;
+    private String endpoint = "";
     private Map<String, String> ip = null;
     private List<Float> lnglat = null;
-    private String client_id = null;
-    private String user_id = null;
-    private Map<String, String> date_time = null;
-    private String method = null;
-    private String endpoint = null;
-    private String protocol_name = null;
-    private String protocol_version = null;
-    private Integer response_code = null;
-    private Integer content_size = null;
-    private String others = null;
+    private String method = "";
+    private String others = "";
+    private String protocol_name = "";
+    private String protocol_version = "";
+    private Integer response_code = 0;
+    private String user_id = "";
 
     public Log(String ip_adress, String client_id, String user_id, String date_string, String method, String endpoint,
                String protocol, String response_code, String content_size, String others) {
@@ -66,9 +66,13 @@ public class Log implements Serializable {
         this.response_code = Integer.parseInt(response_code);
         this.content_size =  Integer.parseInt(content_size);
         this.others = others;
+
+        conversionNullToString();
     }
 
     public Log(CassandraRow crow) {
+
+        logger.log(Level.INFO, "Processing log : " + crow.toString());
 
         this.id = crow.getUUID("id");
         this.ip = JavaConversions.asJavaMap(crow.getMap("ip", new TypeConverter.StringConverter$(),
@@ -85,6 +89,8 @@ public class Log implements Serializable {
         this.response_code = crow.getInt("response_code");
         this.content_size =  crow.getInt("content_size");
         this.others = crow.getString("others");
+
+        conversionNullToString();
     }
 
     public UUID getId() { return id; }
@@ -125,6 +131,19 @@ public class Log implements Serializable {
 
     public String getOthers() { return others; }
     public void setOthers(String others) { this.others = others; }
+
+    private void conversionNullToString () {
+        this.date_time.replace("date_time", null, "");
+        this.date_time.replace("timestamp", null, "");
+        this.date_time.replace("day", null, "");
+        this.date_time.replace("date", null, "");
+        this.date_time.replace("month", null, "");
+        this.date_time.replace("year", null, "");
+        this.date_time.replace("hours", null, "");
+        this.date_time.replace("minutes", null, "");
+        this.date_time.replace("seconds", null, "");
+        this.date_time.replace("timezone_offset", null, "");
+    }
 
     private String[] getDate_timeToString(String dateString) {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MMM/yyyy:HH:mm:ss ZZZ", Locale.US);

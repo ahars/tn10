@@ -19,7 +19,8 @@ public class Batch {
 
         final String PATH = "C:\\Users\\IPPON_2\\Desktop\\tn10\\sparky\\src\\data\\";
         //final String PATH = "/Users/ahars/sparky/src/data/";
-        String filename = PATH + "sample.log";
+        //String filename = PATH + "sample.log";
+        String filename = PATH + "apache_logs_1.log";
 
         SparkConf conf = new SparkConf()
                 .setAppName("SparkBatch")
@@ -58,6 +59,7 @@ public class Batch {
                     "response_code INT," +
                     "user_id TEXT" +
                     ");");
+            session.execute("CREATE INDEX ON access.log (client_id);");
         }
 
         /* Save into Cassandra from file */

@@ -24,6 +24,7 @@ public interface ParseFromLogLine {
 
     public static Log logParse(String logline) {
 
+        logger.log(Level.INFO, "Processing log : " + logline);
         Matcher m = PATTERN.matcher(logline);
         if (!m.find()) {
             logger.log(Level.ALL, "Cannot parse logline" + logline);

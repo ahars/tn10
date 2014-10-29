@@ -17,7 +17,7 @@ public class LocationIp {
     //private File file = new File(PATH + "/GeoLiteCity.dat");
 
     private HashMap<String, String> ip_adress = null;
-    private List<Float> lnglat;
+    private List<Float> lnglat = null;
 
     public LocationIp(String ip_adress) {
 
@@ -43,6 +43,7 @@ public class LocationIp {
             this.lnglat.add(l.latitude);
 
             cl.close();
+            conversionNullToString();
         }
         catch (IOException e) {
             System.out.println("error LocationIp");
@@ -56,4 +57,17 @@ public class LocationIp {
 
     public List<Float> getLnglat() { return lnglat; }
     public void setLngLat(List<Float> lnglat) { this.lnglat = lnglat; }
+
+    private void conversionNullToString () {
+        this.ip_adress.replace("ip_adress", null, "");
+        this.ip_adress.replace("country_code", null, "");
+        this.ip_adress.replace("country_name", null, "");
+        this.ip_adress.replace("region_code", null, "");
+        this.ip_adress.replace("region_name", null, "");
+        this.ip_adress.replace("city", null, "");
+        this.ip_adress.replace("postal_code", null, "");
+        this.ip_adress.replace("metro_code", null, "");
+        this.ip_adress.replace("area_code", null, "");
+        this.ip_adress.replace("timezone", null, "");
+    }
 }

@@ -5,6 +5,7 @@ import com.datastax.spark.connector.CassandraJavaUtil;
 import com.datastax.spark.connector.cql.CassandraConnector;
 import formatLog.Log;
 import formatLog.ParseFromLogLine;
+import org.apache.hadoop.util.StringUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.elasticsearch.client.Client;
@@ -20,6 +21,7 @@ public class OthersLogBatchTest {
         final String PATH = "C:\\Users\\IPPON_2\\Desktop\\tn10\\sparky\\src\\data\\";
         //final String PATH = "/Users/ahars/sparky/src/data/";
         String filename = PATH + "sample.log";
+        //String filename = PATH + "apache_logs_1.log";
 
         SparkConf conf = new SparkConf()
                 .setAppName("OthersLogBatchTest")
@@ -61,14 +63,19 @@ public class OthersLogBatchTest {
         }
 
         /* Save into Cassandra from file */
-        CassandraJavaUtil.javaFunctions(sc.textFile(filename).map(x -> ParseFromLogLine.logParse(x)), Log.class)
+/*        CassandraJavaUtil.javaFunctions(sc.textFile(filename).map(x -> ParseFromLogLine.logParse(x)), Log.class)
                 .saveToCassandra("access", "log");
 
+        CassandraJavaUtil.javaFunctions(sc).cassandraTable("access", "log").map(x -> x.toString()).foreach(x -> System.out.println(x));
+
+/*
         System.out.println(CassandraJavaUtil.javaFunctions(sc).cassandraTable("access", "log").map(x -> new Log(x)).first().toString());
 
         /* Save into ElasticSearch from Cassandra */
-        saveJsonToEs(CassandraJavaUtil.javaFunctions(sc).cassandraTable("access", "log")
+  /*      saveJsonToEs(CassandraJavaUtil.javaFunctions(sc).cassandraTable("access", "log")
                 .map(x -> new Log(x).toJSON().string()), "sparky/Batch");
+*/
+        sc.textFile(filename).map(x -> ParseFromLogLine.logParse(x).toJSON().string()).foreach(x -> System.out.println(x));
 
         sc.stop();
     }
