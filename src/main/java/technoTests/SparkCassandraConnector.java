@@ -23,7 +23,7 @@ public class SparkCassandraConnector {
         SparkConf conf = new SparkConf()
                 .setAppName("SparkToCassandra")
                 .setMaster("local")
-                .set("spark.cassandra.connection.host", "localhost");
+                .set("spark.cassandra.connection.host", "127.0.0.1");
         JavaSparkContext sc = new JavaSparkContext(conf);
 
         CassandraConnector connector = CassandraConnector.apply(sc.getConf());

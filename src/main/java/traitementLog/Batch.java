@@ -1,4 +1,4 @@
-package traitementLogs;
+package traitementLog;
 
 import com.datastax.driver.core.Session;
 import com.datastax.spark.connector.CassandraJavaUtil;
@@ -67,8 +67,8 @@ public class Batch {
                 .saveToCassandra("access", "log");
 
         /* Save into ElasticSearch from Cassandra */
-        saveJsonToEs(CassandraJavaUtil.javaFunctions(sc).cassandraTable("access", "log")
-                .map(x -> new Log(x).toJSON().string()), "sparky/Batch");
+ //       saveJsonToEs(CassandraJavaUtil.javaFunctions(sc).cassandraTable("access", "log")
+   //             .map(x -> new Log(x).toJSON().string()), "sparky/traitementLog.Batch");
 
         sc.stop();
     }

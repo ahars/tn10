@@ -1,17 +1,9 @@
 package technoTests;
 
-import com.datastax.driver.core.Session;
-import com.datastax.spark.connector.CassandraJavaUtil;
-import com.datastax.spark.connector.cql.CassandraConnector;
-import formatLog.Log;
 import formatLog.ParseFromLogLine;
-import org.apache.hadoop.util.StringUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.node.Node;
 
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 import static org.elasticsearch.spark.api.java.JavaEsSpark.saveJsonToEs;
 
 public class OthersLogBatchTest {
@@ -73,9 +65,9 @@ public class OthersLogBatchTest {
 
         /* Save into ElasticSearch from Cassandra */
   /*      saveJsonToEs(CassandraJavaUtil.javaFunctions(sc).cassandraTable("access", "log")
-                .map(x -> new Log(x).toJSON().string()), "sparky/Batch");
+                .map(x -> new Log(x).toJSON().string()), "sparky/traitementLog.Batch");
 */
-        sc.textFile(filename).map(x -> ParseFromLogLine.logParse(x).toJSON().string()).foreach(x -> System.out.println(x));
+        sc.textFile(filename).map(x -> ParseFromLogLine.logParse(x).toJSON().string());
 
         sc.stop();
     }

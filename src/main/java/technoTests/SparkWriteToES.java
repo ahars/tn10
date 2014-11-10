@@ -2,10 +2,9 @@ package technoTests;
 
 import formatLog.ParseFromLogLine;
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
-import static org.elasticsearch.spark.api.java.JavaEsSpark.saveJsonToEs;
+import org.elasticsearch.spark.api.java.JavaEsSpark;
 
 public class SparkWriteToES {
 
@@ -23,10 +22,8 @@ public class SparkWriteToES {
         JavaSparkContext sc = new JavaSparkContext(conf);
         System.out.println(sc.getConf().toDebugString());
 
-        JavaRDD<String> javaRDD = sc.textFile(filename)
-                .map(x -> ParseFromLogLine.logParse(x).toJSON().string())
-                .cache();
-        saveJsonToEs(javaRDD, "sparky/WriteToES");
+        JavaEsSpark.saveJsonToEs(sc.textFile(filename).map(x -> ParseFromLogLine.logParse(x).toJSON().string()),
+                "sparky/WriteToES");
 
         sc.stop();
     }
