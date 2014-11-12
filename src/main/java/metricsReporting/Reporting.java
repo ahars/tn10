@@ -3,8 +3,12 @@ package metricsReporting;
 import org.apache.spark.SparkConf;
 import org.apache.spark.streaming.Duration;
 import org.apache.spark.streaming.api.java.JavaDStream;
+import org.apache.spark.streaming.api.java.JavaReceiverInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
-import scala.actors.threadpool.Arrays;
+import org.codehaus.jackson.map.ObjectMapper;
+
+import java.io.IOException;
+import java.util.Map;
 
 public class Reporting {
 
@@ -14,13 +18,24 @@ public class Reporting {
                 .setAppName("SparkStreaming")
                 .setMaster("local[2]");
 
-        JavaStreamingContext sc = new JavaStreamingContext(conf, new Duration(2000));
+        JavaStreamingContext sc = new JavaStreamingContext(conf, new Duration(5000));
         System.out.println(sc.sc().getConf().toDebugString());
 
-        //JavaDStream<String> customReceiverStream = sc.receiverStream(new MetricsReceiver("127.0.0.1", 9999));
-        sc.socketTextStream("localhost", 9999).count().print();
+        //sc.receiverStream(new MetricsReceiver("localhost", 9999)).count().print();
+
+        JavaReceiverInputDStream<String> test = sc.socketTextStream("localhost", 9999);
+
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            System.out.println("result = " + mapper.readValue(test.toString(), Map.class));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         sc.start();
         sc.awaitTermination();
+
     }
 }

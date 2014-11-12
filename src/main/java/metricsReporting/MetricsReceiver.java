@@ -1,19 +1,23 @@
 package metricsReporting;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.spark.storage.StorageLevel;
 import org.apache.spark.streaming.receiver.Receiver;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
-public class MetricsReceiver extends Receiver<String> {
+public class MetricsReceiver extends Receiver<Map<String, Object>> {
 
     String host = null;
     int port = -1;
 
     public MetricsReceiver(String host, int port) {
-        super(StorageLevel.MEMORY_AND_DISK_2());
+        super(StorageLevel.MEMORY_ONLY());
         this.host = host;
         this.port = port;
     }
@@ -40,15 +44,19 @@ public class MetricsReceiver extends Receiver<String> {
         Socket socket = null;
         String userInput = null;
 
+        ObjectMapper mapper = new ObjectMapper();
+
         try {
             // connect to the server
             socket = new Socket(host, port);
             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             // Until stopped or connection broken continue reading
-            while ((userInput = reader.readLine()) != null) {
+            while (!isStopped() && (userInput = reader.readLine()) != null) {
                 System.out.println("Received data '" + userInput + "'");
-                store(userInput);
+
+                //store(userInput);
+                store(mapper.readValue(userInput, Map.class));
             }
             reader.close();
             socket.close();
