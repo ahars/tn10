@@ -1,5 +1,5 @@
-package technoTests;
-
+package technoTests.spark;
+/*
 import formatLog.ParseFromLogLine;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -66,9 +66,10 @@ public class OthersLogBatchTest {
         /* Save into ElasticSearch from Cassandra */
   /*      saveJsonToEs(CassandraJavaUtil.javaFunctions(sc).cassandraTable("access", "log")
                 .map(x -> new Log(x).toJSON().string()), "sparky/traitementLog.Batch");
-*/
+
         sc.textFile(filename).map(x -> ParseFromLogLine.logParse(x).toJSON().string());
 
         sc.stop();
     }
 }
+*/

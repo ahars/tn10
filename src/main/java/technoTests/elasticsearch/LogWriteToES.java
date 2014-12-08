@@ -1,5 +1,5 @@
-package technoTests;
-
+package technoTests.elasticsearch;
+/*
 import formatLog.ParseFromLogLine;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
@@ -46,3 +46,4 @@ public class LogWriteToES {
     }
 }
 
+*/

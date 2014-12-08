@@ -1,5 +1,5 @@
 package formatLog;
-
+/*
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
 import com.maxmind.geoip.timeZone;
@@ -69,3 +69,4 @@ public class LocationIp {
     public void setLngLat(List<Float> lnglat) { this.lnglat = lnglat; }
 
 }
+*/

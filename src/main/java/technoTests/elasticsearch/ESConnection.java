@@ -1,5 +1,5 @@
-package technoTests;
-
+package technoTests.elasticsearch;
+/*
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentBuilder;
@@ -49,3 +49,4 @@ public class ESConnection {
                 .actionGet();
     }
 }
+*/

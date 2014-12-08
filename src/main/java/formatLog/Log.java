@@ -1,5 +1,5 @@
 package formatLog;
-
+/*
 import com.datastax.spark.connector.CassandraRow;
 import com.datastax.spark.connector.types.TypeConverter;
 import org.apache.cassandra.utils.UUIDGen;
@@ -226,3 +226,4 @@ public class Log implements Serializable {
                 .endObject();
     }
 }
+*/

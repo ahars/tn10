@@ -1,5 +1,5 @@
-package technoTests;
-
+package technoTests.elasticsearch;
+/*
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.node.Node;
@@ -23,3 +23,4 @@ public class LogReadFromES {
     }
 }
 
+*/

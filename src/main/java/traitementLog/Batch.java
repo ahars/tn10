@@ -1,5 +1,5 @@
 package traitementLog;
-
+/*
 import com.datastax.driver.core.Session;
 import com.datastax.spark.connector.CassandraJavaUtil;
 import com.datastax.spark.connector.cql.CassandraConnector;
@@ -31,11 +31,11 @@ public class Batch {
         JavaSparkContext sc = new JavaSparkContext(conf);
         System.out.println(sc.getConf().toDebugString());
 
-        /* Init ElasticSearch */
+        // Init ElasticSearch
         Node node = nodeBuilder().clusterName("elasticsearch").node();
         Client client = node.client();
 
-        /* Init Cassandra */
+        // Init Cassandra
         CassandraConnector connector = CassandraConnector.apply(sc.getConf());
         try (Session session = connector.openSession()) {
             session.execute("DROP KEYSPACE IF EXISTS access;");
@@ -62,14 +62,15 @@ public class Batch {
             session.execute("CREATE INDEX ON access.log (client_id);");
         }
 
-        /* Save into Cassandra from file */
+        // Save into Cassandra from file
         CassandraJavaUtil.javaFunctions(sc.textFile(filename).map(x -> ParseFromLogLine.logParse(x)), Log.class)
                 .saveToCassandra("access", "log");
 
-        /* Save into ElasticSearch from Cassandra */
+        // Save into ElasticSearch from Cassandra
  //       saveJsonToEs(CassandraJavaUtil.javaFunctions(sc).cassandraTable("access", "log")
    //             .map(x -> new Log(x).toJSON().string()), "sparky/traitementLog.Batch");
 
         sc.stop();
     }
 }
+*/

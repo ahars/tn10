@@ -1,5 +1,5 @@
-package technoTests;
-
+package technoTests.spark;
+/*
 import formatLog.ParseFromLogLine;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -28,8 +28,9 @@ public class RegexTest implements ParseFromLogLine {
 
 
   */
-        String date_string = "11/Sep/2014:06:26:25 +0200";
+        /*String date_string = "11/Sep/2014:06:26:25 +0200";
 
         System.out.println(Instant.now());
     }
 }
+*/

@@ -1,4 +1,4 @@
-package technoTests;
+package technoTests.cassandra;
 
 import java.io.Serializable;
 import java.util.Date;

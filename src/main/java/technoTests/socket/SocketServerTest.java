@@ -1,4 +1,4 @@
-package technoTests;
+package technoTests.socket;
 
 import java.io.BufferedReader;
 import java.io.IOException;

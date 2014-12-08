@@ -1,4 +1,4 @@
-package technoTests;
+package technoTests.spark;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;

@@ -1,5 +1,5 @@
-package technoTests;
-
+package technoTests.cassandra;
+/*
 import com.datastax.driver.core.Session;
 import com.datastax.spark.connector.CassandraJavaUtil;
 import com.datastax.spark.connector.cql.CassandraConnector;
@@ -111,3 +111,4 @@ public class SparkCassandraConnector {
         sc.stop();
     }
 }
+*/

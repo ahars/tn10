@@ -1,16 +1,19 @@
-package technoTests;
+package technoTests.cassandra;
 
 import com.datastax.driver.core.Session;
-import com.datastax.spark.connector.CassandraJavaUtil;
 import com.datastax.spark.connector.cql.CassandraConnector;
-import com.datastax.spark.connector.rdd.CassandraJavaRDD;
-import org.apache.commons.lang.StringUtils;
+import com.datastax.spark.connector.japi.CassandraJavaUtil;
+import com.datastax.spark.connector.japi.rdd.CassandraJavaRDD;
+import org.apache.hadoop.util.StringUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+import static com.datastax.spark.connector.japi.CassandraJavaUtil.javaFunctions;
 
 public class SparkCassandraTest {
 
@@ -46,31 +49,33 @@ public class SparkCassandraTest {
             session.execute("INSERT INTO test.people (id, name, birth_date) " +
                     "VALUES (12, 'Anna', '1970-10-02');");
         }
+        JavaRDD<String> cassandraRowsRDD = javaFunctions(sc).cassandraTable("test", "people").map(cassandraRow -> cassandraRow.toString());
+        System.out.println("Data as CassandraRows: \n" + StringUtils.join("\n", cassandraRowsRDD.toArray()));
 
         System.out.println("Data as CassandraRows: \n" +
-                StringUtils.join(CassandraJavaUtil.javaFunctions(sc)
-                        .cassandraTable("test", "people")
-                        .map(x -> x.toString())
-                        .toArray(), "\n"));
+            StringUtils.join("\n", javaFunctions(sc)
+                .cassandraTable("test", "people")
+                .map(x -> x.toString())
+                .toArray()));
 
         System.out.println("Data with only 'id' column fetched: \n" +
-                StringUtils.join(CassandraJavaUtil.javaFunctions(sc)
-                        .cassandraTable("test", "people")
-                        .select("id")
-                        .map(x -> x.toString())
-                        .toArray(), "\n"));
+            StringUtils.join("\n", javaFunctions(sc)
+                .cassandraTable("test", "people")
+                .select("id")
+                .map(x -> x.toString())
+                .toArray()));
 
         System.out.println("Data filtered by the where clause (name='Anna'): \n" +
-                StringUtils.join(CassandraJavaUtil.javaFunctions(sc)
-                        .cassandraTable("test", "people")
-                        .where("name=?", "Anna")
-                        .map(x -> x.toString())
-                        .toArray(), "\n"));
+            StringUtils.join("\n", javaFunctions(sc)
+                .cassandraTable("test", "people")
+                .where("name=?", "Anna")
+                .map(x -> x.toString())
+                .toArray()));
 
         List<Person> people = Arrays.asList(
-                new Person(1, "John", new Date())//,
-//                new Person(2, "Troy", new Date()),
-//                new Person(3, "Andrew", new Date())
+            new Person(1, "John", new Date()),
+            new Person(2, "Troy", new Date()),
+            new Person(3, "Andrew", new Date())
         );
         System.out.println(people.toString());
 
@@ -78,17 +83,17 @@ public class SparkCassandraTest {
         System.out.println(rdd.first().toString());
 
 
-        CassandraJavaUtil.javaFunctions(rdd, Person.class).saveToCassandra("test", "people");
+        javaFunctions(rdd)..saveToCassandra("test", "people");
 
         System.out.println("Data as CassandraRows: \n" +
-                StringUtils.join(CassandraJavaUtil.javaFunctions(sc)
-                        .cassandraTable("test", "people")
-                        .map(x -> x.toString())
-                        .toArray(), "\n"));
+                StringUtils.join("\n", javaFunctions(sc)
+                    .cassandraTable("test", "people")
+                    .map(x -> x.toString())
+                    .toArray()));
 
-        CassandraJavaRDD<Person> rdd2 = CassandraJavaUtil.javaFunctions(sc).cassandraTable("test", "people", Person.class);
+        CassandraJavaRDD<Person> rdd2 = javaFunctions(sc).cassandraTable("test", "people", Person.class);
         System.out.println(rdd2.first().getName() + " " + rdd2.first().getId() + " " + rdd2.first().getBirthDate());
-
+*/
         sc.stop();
     }
 }
