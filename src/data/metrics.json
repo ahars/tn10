@@ -1,1 +1,0 @@
-{"timers":{},"histograms":{},"counters":{},"gauges":{"com.clescot.rest.FooResource.cputime":{"value":"23923824"}},"version":"3.0.0","meters":{"com.clescot.rest.FooResource.testException.exceptions":{"mean_rate":0.004765897685820465,"count":17,"units":"events/second","m15_rate":7.644264497709307E-27,"m1_rate":3.7290750935655375E-4,"m5_rate":4.360287931021742E-7}}}
