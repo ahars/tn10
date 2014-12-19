@@ -1,32 +1,25 @@
 package technoTests.spark;
-/*
+
 import formatLog.ParseFromLogLine;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.serializer.KryoSerializer;
 
 public class LogBatch {
 
     public static void main(String[] args) {
 
-        final String PATH = "C:\\Users\\IPPON_2\\Desktop\\tn10\\sparky\\src\\data\\";
-        //final String PATH = "/Users/ahars/sparky/src/data/";
+        final String PATH = "/home/ippon/github/sparktacus/src/data/";
         String filename = PATH + "sample.log";
-        //String filename = PATH + "apache_logs_1.log";
 
         SparkConf conf = new SparkConf()
                 .setAppName("SparkLogBatch")
-                .setMaster("local")
-                .set("spark.files.overwrite", "true")
-                .set("spark.serializer", KryoSerializer.class.getName());
-        JavaSparkContext sc = new JavaSparkContext(conf);
-        System.out.println(sc.getConf().toDebugString());
+                .setMaster("local");
 
-        sc.textFile(filename)
-                .foreach(x -> System.out.println(ParseFromLogLine.logParse(x).toJSON().string()));
-        //sc.textFile(filename).map(ApacheAccessLog::parseFromLogLine).saveAsTextFile(PATH + "output");
+        JavaSparkContext sc = new JavaSparkContext(conf);
+
+        sc.textFile(filename).foreach(x -> System.out.println(ParseFromLogLine.logParse(x).toString()));
 
         sc.stop();
     }
 }
-*/
+

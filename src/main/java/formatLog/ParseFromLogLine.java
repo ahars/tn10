@@ -1,5 +1,5 @@
 package formatLog;
-/*
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -24,7 +24,6 @@ public interface ParseFromLogLine {
 
     public static Log logParse(String logline) {
 
-        logger.log(Level.INFO, "Processing log : " + logline);
         Matcher m = PATTERN.matcher(logline);
         if (!m.find()) {
             logger.log(Level.ALL, "Cannot parse logline" + logline);
@@ -34,4 +33,4 @@ public interface ParseFromLogLine {
                 m.group(5), m.group(6), m.group(7), m.group(8), m.group(9), m.group(10));
     }
 }
-*/
+
